@@ -1,0 +1,5 @@
+*.o
+*.dep
+.depend
+iint
+
