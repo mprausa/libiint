@@ -140,16 +140,16 @@ namespace arb {
 
                 if (arb_is_nonzero(acb_imagref(acb))) {
                     char *cstr;
-                    if (arb_is_int(acb_realref(acb))) {
+                    if (arb_is_int(acb_imagref(acb))) {
                         fmpz_t v;
                         fmpz_init(v);
 
-                        arf_get_fmpz(v,arb_midref(acb_realref(acb)),ARF_RND_NEAR);
+                        arf_get_fmpz(v,arb_midref(acb_imagref(acb)),ARF_RND_NEAR);
                         cstr = fmpz_get_str(NULL,10,v);
 
                         fmpz_clear(v);
                     } else {
-                        cstr = arb_get_str(acb_realref(acb),digits,0);
+                        cstr = arb_get_str(acb_imagref(acb),digits,0);
                     }
 
                     if (!res.empty()) res += " + ";
@@ -212,6 +212,13 @@ namespace arb {
                     acb_abs(acb_realref(res.acb),acb,prec0);
                 }
 
+                res.update_default_prec(defPrec);
+                return res;
+            }
+
+            Acb conj() const {
+                Acb res;
+                acb_conj(res.acb,acb);
                 res.update_default_prec(defPrec);
                 return res;
             }
