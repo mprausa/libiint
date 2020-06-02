@@ -42,6 +42,12 @@ namespace iint {
         _points[x] = {prec,k0,r,a,dp};
     }
 
+    int ODE::start(const arb::Acb &x) {
+        auto it = _points.find(x);
+        assert(it != _points.end());
+        return it->second.k0;
+    }
+
     const arb::Acb &ODE::operator() (const arb::Acb &x, int k) {
         assert(_points.count(x));
         auto &data = _points[x];

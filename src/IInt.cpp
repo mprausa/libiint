@@ -31,7 +31,7 @@ namespace iint {
         if (_kernels.empty()) return 0;
 
         int n0 = _subiint ? _subiint->start(x) : 0;
-        int k0 = _kernels.front()->start(x);
+        int k0 = _kernels.front()->init(x);
 
         int n1 = n0+k0+2;
         return n1>=0 ? 0 : n1;
@@ -40,7 +40,7 @@ namespace iint {
     int IInt::maxlog(const arb::Acb &x) {
         int m = 0;
         for (auto &k : _kernels) {
-            if (k->start(x) <= -2) ++m;
+            if (k->init(x) <= -2) ++m;
         }
         return m;
     }
@@ -62,7 +62,7 @@ namespace iint {
         arb::Acb &res = _cache[{x,n,m}];
 
         if (n == 0 && m>0) {
-            int k0 = _kernels.front()->start(x);
+            int k0 = _kernels.front()->init(x);
             int n0 = _subiint->start(x);
 
             res = 0;
@@ -73,7 +73,7 @@ namespace iint {
             res /= m;
         } else if (n != 0) {
             int mhat = _subiint->maxlog(x);
-            int k0 = _kernels.front()->start(x);
+            int k0 = _kernels.front()->init(x);
             int n0 = _subiint->start(x);
             long prec = x.default_prec();
 

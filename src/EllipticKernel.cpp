@@ -1,4 +1,4 @@
-#include <iint/PsiSquared.h>
+#include <iint/EllipticKernel.h>
 #include <acb_elliptic.h>
 
 namespace {
@@ -19,18 +19,40 @@ namespace {
 }
 
 namespace iint {
-    PsiSquared::PsiSquared() : _phi({
-        {2,58,58,2},
-        {-1,57,-10,-38,-9,1},
-        {0,-3,87,-198,150,-39,3},
-        {0,0,-1,21,-58,58,-21,1}}) {}
+    EllipticKernel::EllipticKernel(const std::vector<int> &numer, const std::vector<int> &denom)
+        : _trat(numer,denom), _phi({
+            {2,58,58,2},
+            {-1,57,-10,-38,-9,1},
+            {0,-3,87,-198,150,-39,3},
+            {0,0,-1,21,-58,58,-21,1}}) {
 
-    int PsiSquared::init(const arb::Acb &x) {
+        std::cout << "_trat = " << _trat << std::endl;
+    }
+
+    arb::Acb EllipticKernel::_calc(const arb::Acb &x, int k) {
+        int n0 = _trat.init(x);
+        int k0 = _phi.start(x);
+
+        if (k < n0+k0) return arb::Acb(0,x.default_prec());
+
+        arb::Acb res;
+        for (int n=n0; n<=k-k0; ++n) {
+            res += _trat(x,n) * _phi(x,k-n);
+        }
+
+        return res;
+    }
+
+    int EllipticKernel::_init(const arb::Acb &x) {
         const long prec = x.default_prec();
+
+        int n0 = _trat.init(x);
 
         if (x == 1) {
             assert(false);  //TODO
         } else {
+            assert(!x.contains_zero()); //TODO
+
             arb::Acb zero(0,prec);
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
@@ -64,26 +86,7 @@ namespace iint {
                           (-1 + 9*x + thesqrt).pow(2)*(2 - 10*x.pow(2) - 2*thesqrt + 6*x*(-4 + thesqrt)).pow(7));
 
             _phi.init(x,0,0,{c0,zero,c1,zero,c2});
-
-#if 0
-            for (int k=0; k<=20; ++k) {
-                std::cout << "a[" << k << "] = " << _phi(x,k) << std::endl;
-            }
-#else
-            {
-                arb::Acb res;
-                arb::Acb del(.25,prec);
-                arb::Acb sqrtdel = del.sqrt();
-
-                for (int k=0; k<=200; ++k) {
-                    res += _phi(x,k) * sqrtdel.pow(k);
-                }
-
-                std::cout << "res = " << res << std::endl;
-            }
-#endif
-
-            return 0;
+            return n0;
         }
     }
 }

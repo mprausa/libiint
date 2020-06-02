@@ -11,12 +11,11 @@ namespace iint {
                 _nocache = true;
             }
 
-            virtual int start(const arb::Acb &x) const;
-
             virtual std::string str() const {
                 return "w("+_a.str()+")";
             }
         protected:
-            virtual arb::Acb calc(const arb::Acb &x, int k);
+            virtual arb::Acb _calc(const arb::Acb &x, int k);
+            virtual int _init(const arb::Acb &x);
     };
 }

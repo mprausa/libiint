@@ -23,6 +23,7 @@ namespace iint {
             ODE(const std::vector<std::vector<int>> &p);
 
             void init(const arb::Acb &x, int k0, int r, const std::vector<arb::Acb> &a);
+            int start(const arb::Acb &x);
             const arb::Acb &operator() (const arb::Acb &x, int k);
         private:
             arb::Acb C(int j, int k, const point_data &data) const;

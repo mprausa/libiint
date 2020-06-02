@@ -2,19 +2,29 @@
 
 #include <arb/Acb.h>
 #include <typeinfo>
+#include <unordered_map>
 
 namespace iint {
     class Kernel {
         protected:
             bool _nocache = false;
+
+            struct point_data {
+                int k0;
+                std::vector<arb::Acb> cache;
+            };
+            std::unordered_map<arb::Acb,point_data> _points;
+
         public:
             arb::Acb operator() (const arb::Acb &x, int k);
-            virtual int start(const arb::Acb &x) const = 0;
+            int init(const arb::Acb &x);
+
             virtual std::string str() const {
                 return typeid(*this).name();
             }
         protected:
-            virtual arb::Acb calc(const arb::Acb &x, int k) = 0;
+            virtual int _init(const arb::Acb &x) = 0;
+            virtual arb::Acb _calc(const arb::Acb &x, int k) = 0;
     };
 
     inline std::ostream &operator<<(std::ostream &os, const Kernel &krn) {

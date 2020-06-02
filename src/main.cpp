@@ -1,7 +1,7 @@
 #include <iint/GPLKernel.h>
 #include <iint/IInt.h>
 #include <iint/ODE.h>
-#include <iint/PsiSquared.h>
+#include <iint/EllipticKernel.h>
 #include <iint/TRat.h>
 #include <memory>
 #include <iostream>
@@ -47,18 +47,21 @@ int main() {
 
     return 0;
 }
-#elif 0
+#elif 1
 int main() {
     const long prec=100;
 
-    iint::PsiSquared psi2;
+    iint::EllipticKernel ell({-2,-3,-4,-15,-7,8},{0,0,-1,2,-2,-1,7,6});
     arb::Acb x(.5,prec);
 
-    psi2.init(x);
+    int n0 = ell.init(x);
+    for (int n=n0; n<10; ++n) {
+        std::cout << "ell[" << n << "] = " << ell(x,n) << std::endl;
+    }
 
     return 0;
 }
-#else
+#elif 0
 int main() {
     const long prec=300;
     //auto x = arb::Acb(2,prec)/99;
@@ -74,5 +77,4 @@ int main() {
         std::cout << "trat[" << n << "] = " << trat(x,n) << std::endl;
     }
 }
-
 #endif
