@@ -61,14 +61,14 @@ int main() {
 #else
 int main() {
     const long prec=100;
-    arb::Acb x(.5,prec);
+    auto x = arb::Acb(2,prec)/99;
 
-    iint::TRat trat({-2,-3,-4,-15,-7,8},{0,0,2,5,3,1,5,5});
+    iint::TRat trat({-2,-3,-4,-15,-7,8},{-1,2,-2,-1,7,6});
 
     std::cout << trat << std::endl;
     int n0 = trat.init(x);
 
-    for (int n=n0; n<20; ++n) {
+    for (int n=n0; n<=20; ++n) {
         std::cout << "trat[" << n << "] = " << trat(x,n) << std::endl;
     }
 }

@@ -13,11 +13,12 @@ namespace iint {
 
             struct point_data {
                 arb::Acb x;
+                int n0;
+                bool reciprocal;
                 std::vector<arb::Acb> numer,denom;
                 int nummin,denmin;
-                std::vector<arb::Acb> rat;
+                std::vector<arb::Acb> rat,xrat,cache;
                 std::vector<std::vector<arb::Acb>> bell;
-                std::vector<arb::Acb> cache;
             };
 
             std::unordered_map<arb::Acb,point_data> _points;
@@ -29,6 +30,7 @@ namespace iint {
 
             void print(std::ostream &os) const;
         private:
+            const arb::Acb &xrat_expansion(point_data &data, int n);
             arb::Acb t_expansion(const arb::Acb &x, int n);
             static arb::Acb rat_expansion(point_data &data, int n);
             const arb::Acb &bell(point_data &data, int n, int k);

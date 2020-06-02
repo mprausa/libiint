@@ -7,7 +7,7 @@ namespace iint {
     }
 
     int TRat::init(const arb::Acb &x)  {
-        if (_points.count(x)) return -_points[x].denmin;
+        if (_points.count(x)) return _points[x].n0;
 
         long prec = x.default_prec();
         point_data data;
@@ -33,6 +33,7 @@ namespace iint {
         };
 
         data.x = x;
+        data.reciprocal = false;
         do_shift(_numer,data.numer);
         do_shift(_denom,data.denom);
 
@@ -42,21 +43,57 @@ namespace iint {
         data.denmin = std::distance(data.denom.begin(),
             std::find_if(data.denom.begin(),data.denom.end(),[](const arb::Acb &v) {return !v.contains_zero();}));
 
+        assert(data.nummin == 0 || data.denmin == 0);
+
+        data.n0 = -2*data.denmin;
+
+        if (data.denmin > 0) {  // let's work with the reciprocal
+            data.reciprocal = true;
+            std::swap(data.numer,data.denom);
+            std::swap(data.nummin,data.denmin);
+        }
+
         _points[x] = data;
 
-        assert(data.denmin == 0);   //TODO
-        return -2*data.denmin;
+        return data.n0;
     }
 
     const arb::Acb &TRat::operator() (const arb::Acb &x, int n) {
         assert(_points.count(x));
         auto &data = _points[x];
 
-        if (n < -2*data.denmin) return _zero;
-        if (n+2*data.denmin < data.cache.size()) return data.cache[n+2*data.denmin];
-        while (n+2*data.denmin > data.cache.size()) (*this)(x,int(data.cache.size()) - 2*data.denmin);
+        if (n < data.n0) return _zero;
+        if (!data.reciprocal) return xrat_expansion(data,n);
 
-        assert(n+2*data.denmin == data.cache.size());
+        if (n-data.n0 < data.cache.size()) return data.cache[n-data.n0];
+        while (n-data.n0 > data.cache.size()) (*this)(x,int(data.cache.size())+data.n0);
+        assert(n-data.n0 == data.cache.size());
+
+        arb::Acb res;
+
+        if (n == data.n0) {
+            res = 1/xrat_expansion(data,-data.n0);
+        } else {
+            long prec = data.x.default_prec();
+            res = arb::Acb(0,prec);
+
+            for (int k=1; k<=n-data.n0; ++k) {
+                res -= xrat_expansion(data,k-data.n0) * data.cache[n-k-data.n0];
+            }
+
+            res *= data.cache.front();
+        }
+
+        data.cache.push_back(res);
+        return data.cache.back();
+    }
+
+    const arb::Acb &TRat::xrat_expansion(point_data &data, int n) {
+        assert(n >= -2*data.denmin);
+        if (n+2*data.denmin < data.xrat.size()) return data.xrat[n+2*data.denmin];
+        while (n+2*data.denmin > data.xrat.size()) xrat_expansion(data,int(data.xrat.size()) - 2*data.denmin);
+
+        assert(n+2*data.denmin == data.xrat.size());
 
         long prec = data.x.default_prec();
 
@@ -68,8 +105,8 @@ namespace iint {
 
         res /= arb::Acb::fac(n,prec);
 
-        data.cache.push_back(res);
-        return data.cache.back();
+        data.xrat.push_back(res);
+        return data.xrat.back();
     }
 
     arb::Acb TRat::t_expansion(const arb::Acb &x, int n) {  // expansion of t in Sqrt[x]
