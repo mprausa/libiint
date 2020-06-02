@@ -61,9 +61,10 @@ int main() {
 #else
 int main() {
     const long prec=100;
-    auto x = arb::Acb(2,prec)/99;
+    //auto x = arb::Acb(2,prec)/99;
+    arb::Acb x(0,prec);
 
-    iint::TRat trat({-2,-3,-4,-15,-7,8},{-1,2,-2,-1,7,6});
+    iint::TRat trat({-2,-3,-4,-15,-7,8},{0,0,-1,2,-2,-1,7,6});
 
     std::cout << trat << std::endl;
     int n0 = trat.init(x);

@@ -12,13 +12,16 @@ namespace iint {
         long prec = x.default_prec();
         point_data data;
 
-        arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
-        arb::Acb t = (1 - 9*x - thesqrt)/(2*x);
+        auto thesqrt = (1 - 18*x + x*x).sqrt().conj();
+        auto t = x.contains_zero() ? arb::Acb(0,prec) : (1 - 9*x - thesqrt)/(2*x);
 
-        assert(!x.contains_zero());         //TODO
         assert(!thesqrt.contains_zero());   //TODO
 
-        _ode.init(x,0,0,{thesqrt/(2*x)});
+        if (x.contains_zero()) {
+            _ode.init(x,-2,1,{arb::Acb(.5,prec)});
+        } else {
+            _ode.init(x,0,0,{thesqrt/(2*x)});
+        }
 
         auto do_shift = [&t,&prec](const std::vector<int> &poly, std::vector<arb::Acb> &res) {
             int N = poly.size()-1;
@@ -111,9 +114,13 @@ namespace iint {
 
     arb::Acb TRat::t_expansion(const arb::Acb &x, int n) {  // expansion of t in Sqrt[x]
         long prec = x.default_prec();
-        auto res = -_ode(x,n);
 
-        assert(!x.contains_zero());     //TODO
+        if (x.contains_zero()) {
+            if (n<2) return arb::Acb(0,prec);
+            return -_ode(x,n);
+        }
+
+        auto res = -_ode(x,n);
 
         if (n%2) return res;
 
