@@ -60,9 +60,10 @@ int main() {
 }
 #else
 int main() {
-    const long prec=100;
+    const long prec=300;
     //auto x = arb::Acb(2,prec)/99;
-    arb::Acb x(0,prec);
+    //arb::Acb x(0,prec);
+    auto x = 9 - 4*arb::Acb(5,prec).sqrt();
 
     iint::TRat trat({-2,-3,-4,-15,-7,8},{0,0,-1,2,-2,-1,7,6});
 

@@ -15,10 +15,12 @@ namespace iint {
         auto thesqrt = (1 - 18*x + x*x).sqrt().conj();
         auto t = x.contains_zero() ? arb::Acb(0,prec) : (1 - 9*x - thesqrt)/(2*x);
 
-        assert(!thesqrt.contains_zero());   //TODO
-
         if (x.contains_zero()) {
             _ode.init(x,-2,1,{arb::Acb(.5,prec)});
+        } else if (thesqrt.contains_zero()) {
+            assert(x == 9-4*arb::Acb(5,prec).sqrt());
+            auto c = arb::Acb::I*arb::Acb(20,prec).pow(arb::Acb(.25,prec))/x;
+            _ode.init(x,1,1,{c});
         } else {
             _ode.init(x,0,0,{thesqrt/(2*x)});
         }
