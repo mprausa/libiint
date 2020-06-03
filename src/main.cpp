@@ -7,7 +7,7 @@
 #include <memory>
 #include <iostream>
 
-#if 0
+#if 1
 int main() {
     auto w0 = std::make_shared<iint::GPLKernel>(0);
     auto w1 = std::make_shared<iint::GPLKernel>(1);
@@ -26,6 +26,12 @@ int main() {
     std::cout << ">> " << (*hpl)(zero,x1) << std::endl;
     std::cout << ">> " << (*hpl)(x2,x1-x2) << std::endl;
     std::cout << ">> " << (*hpl)(one,x1-one) << std::endl;
+
+    for (int n=1; n<32; ++n) {
+        auto x = arb::Acb(0.03125,prec)*n;
+
+        std::cout << "x=" << x << " => " << (*hpl)(x) << std::endl;
+    }
 
     return 0;
 }
@@ -92,7 +98,7 @@ int main() {
 
     return 0;
 }
-#elif 1
+#elif 0
 int main() {
     const long prec = 100;
 
@@ -108,5 +114,27 @@ int main() {
 
     return 0;
 }
+#elif 0
+int main() {
+    const long prec = 100;
+    arb::Acb x1(0.015625,prec);
+    arb::Acb zero(0,prec);
 
+    auto tau = std::make_shared<iint::TauKernel>();
+    auto w0 = std::make_shared<iint::GPLKernel>(0);
+    auto w1 = std::make_shared<iint::GPLKernel>(1);
+    auto wn = std::make_shared<iint::GPLKernel>(-1);
+
+    auto iint1 = iint::IInt::fetch({tau,w1,w0,wn,w1});
+    auto iint2 = iint::IInt::fetch({w1,tau,w0,wn,w1});
+    auto iint3 = iint::IInt::fetch({w1,w0,tau,wn,w1});
+    auto iint4 = iint::IInt::fetch({w1,w0,wn,tau,w1});
+    auto iint5 = iint::IInt::fetch({w1,w0,wn,w1,tau});
+
+    auto res = (*iint1)(zero,x1) + (*iint2)(zero,x1) + (*iint3)(zero,x1) + (*iint4)(zero,x1) + (*iint5)(zero,x1);
+
+    std::cout << ">> " << res << std::endl;
+
+    return 0;
+}
 #endif

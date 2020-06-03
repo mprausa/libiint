@@ -127,6 +127,23 @@ namespace iint {
         return res;
     }
 
+    arb::Acb IInt::operator() (const arb::Acb &x) {
+        auto mindiff = arb::Acb::infty;
+        auto x0 = arb::Acb::nan;
+
+        for (auto &c : _constants) {
+            auto diff = (c.first - x).abs();
+            if (diff < mindiff) {
+                mindiff = diff;
+                x0 = c.first;
+            }
+        }
+
+        assert(!x0.is_nan());
+
+        return (*this)(x0,x-x0);
+    }
+
     std::shared_ptr<IInt> IInt::fetch(const kernels_t &kernels) {
         auto &iint = _iints[kernels];
         if (!iint) iint = std::make_shared<IInt>(kernels);

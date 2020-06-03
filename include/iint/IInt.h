@@ -64,6 +64,7 @@ namespace iint {
             int maxlog(const arb::Acb &x);
             const arb::Acb &operator() (const arb::Acb &x, int n, int m);
             arb::Acb operator() (const arb::Acb &x, const arb::Acb &delta);
+            arb::Acb operator() (const arb::Acb &x);
 
             static std::shared_ptr<IInt> fetch(const kernels_t &kernels);
 
