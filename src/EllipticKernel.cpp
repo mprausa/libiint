@@ -24,10 +24,7 @@ namespace iint {
             {2,58,58,2},
             {-1,57,-10,-38,-9,1},
             {0,-3,87,-198,150,-39,3},
-            {0,0,-1,21,-58,58,-21,1}}) {
-
-        std::cout << "_trat = " << _trat << std::endl;
-    }
+            {0,0,-1,21,-58,58,-21,1}}) {}
 
     arb::Acb EllipticKernel::_calc(const arb::Acb &x, int k) {
         int n0 = _trat.init(x);
@@ -45,15 +42,17 @@ namespace iint {
 
     int EllipticKernel::_init(const arb::Acb &x) {
         const long prec = x.default_prec();
+        arb::Acb zero(0,prec);
 
         int n0 = _trat.init(x);
 
         if (x == 1) {
             assert(false);  //TODO
+        } else if (x.contains_zero()) {
+            auto pi2 = arb::Acb::Pi(prec).pow(2);
+            _phi.init(x,0,2,{10*pi2,zero,20*pi2,zero,220*pi2});
+            return n0;
         } else {
-            assert(!x.contains_zero()); //TODO
-
-            arb::Acb zero(0,prec);
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
             arb::Acb t = (1 - 9*x - thesqrt)/(2*x);

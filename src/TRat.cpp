@@ -50,7 +50,7 @@ namespace iint {
 
         assert(data.nummin == 0 || data.denmin == 0);
 
-        data.n0 = -2*data.denmin;
+        data.n0 = 2*data.nummin - 2*data.denmin;
 
         if (data.denmin > 0) {  // let's work with the reciprocal
             data.reciprocal = true;
@@ -139,11 +139,11 @@ namespace iint {
     }
 
     arb::Acb TRat::rat_expansion(point_data &data, int n) { // expansion of numer/denom in t
-        if (n < -data.denmin) return arb::Acb(0,data.x.default_prec());
-        if (n+data.denmin < data.rat.size()) return data.rat[n+data.denmin];
-        while (n+data.denmin > data.rat.size()) rat_expansion(data,data.rat.size()-data.denmin);
+        if (n < data.nummin-data.denmin) return arb::Acb(0,data.x.default_prec());
+        if (n-data.nummin+data.denmin < data.rat.size()) return data.rat[n-data.nummin+data.denmin];
+        while (n-data.nummin+data.denmin > data.rat.size()) rat_expansion(data,data.rat.size()+data.nummin-data.denmin);
 
-        assert(data.rat.size() == n+data.denmin);
+        assert(data.rat.size() == n-data.nummin+data.denmin);
 
         arb::Acb v(0,data.x.default_prec());
 

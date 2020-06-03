@@ -2,6 +2,7 @@
 #include <iint/IInt.h>
 #include <iint/ODE.h>
 #include <iint/EllipticKernel.h>
+#include <iint/TauKernel.h>
 #include <iint/TRat.h>
 #include <memory>
 #include <iostream>
@@ -47,7 +48,7 @@ int main() {
 
     return 0;
 }
-#elif 1
+#elif 0
 int main() {
     const long prec=100;
 
@@ -65,10 +66,10 @@ int main() {
 int main() {
     const long prec=300;
     //auto x = arb::Acb(2,prec)/99;
-    //arb::Acb x(0,prec);
-    auto x = 9 - 4*arb::Acb(5,prec).sqrt();
+    arb::Acb x(0,prec);
+    //auto x = 9 - 4*arb::Acb(5,prec).sqrt();
 
-    iint::TRat trat({-2,-3,-4,-15,-7,8},{0,0,-1,2,-2,-1,7,6});
+    iint::TRat trat({0,0,-2,-3,-4,-15,-7,8},{-1,2,-2,-1,7,6});
 
     std::cout << trat << std::endl;
     int n0 = trat.init(x);
@@ -77,4 +78,35 @@ int main() {
         std::cout << "trat[" << n << "] = " << trat(x,n) << std::endl;
     }
 }
+#elif 0
+int main() {
+    const long prec=300;
+    arb::Acb x(0,prec);
+
+    iint::TauKernel tau;
+    int n0 = tau.init(x);
+
+    for (int n=n0; n<=10; ++n) {
+        std::cout << "tau[" << n << "] = " << tau(x,n) << std::endl;
+    }
+
+    return 0;
+}
+#elif 1
+int main() {
+    const long prec = 100;
+
+    auto tau = std::make_shared<iint::TauKernel>();
+    arb::Acb zero(0,prec);
+    arb::Acb x1(0.03125,prec);
+    //arb::Acb x1(0.015625,prec);
+
+    auto itau = iint::IInt::fetch({tau});
+
+    std::cout << *itau << " @ " << x1 << std::endl;
+    std::cout << ">> " << (*itau)(zero,x1) << std::endl;
+
+    return 0;
+}
+
 #endif
