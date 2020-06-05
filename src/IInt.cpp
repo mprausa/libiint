@@ -8,23 +8,25 @@ namespace iint {
     IInt::IInt(const kernels_t &kernels) : _kernels(kernels) {
         _constants[0] = 0;
 
+//_constants[9-4*arb::Acb(5,1000).sqrt()] = arb::Acb("0.3162277660168379331998893544432718533719555139325216826857504852792594438639238221344248108379300295",300)*arb::Acb::I;
+
         if (!kernels.empty()) {
             _subiint = fetch(kernels_t(kernels.begin()+1,kernels.end()));
         }
     }
 
-    void IInt::match(const arb::Acb &x1, const arb::Acb &x2) {
+    void IInt::match(const arb::Acb &x1, const arb::Acb &x2, const arb::Acb &x) {
         if (_kernels.empty()) return;
         if (_constants.count(x2)) return;
 
         assert(_constants.count(x1));
 
-        _subiint->match(x1,x2);
-
-        auto del = (x2-x1)/2;
+        _subiint->match(x1,x2,x);
 
         _constants[x2] = 0;
-        _constants[x2] = (*this)(x1,del) - (*this)(x2,-del);
+        _constants[x2] = (*this)(x1,x-x1) - (*this)(x2,x-x2);
+
+        std::cout << "_constants[" << x2 << "] = " << _constants[x2] << std::endl;
     }
 
     int IInt::start(const arb::Acb &x) {
@@ -97,7 +99,7 @@ namespace iint {
 
         arb::Acb res;
 
-        //std::cout << "x = " << x << " delta = " << delta << std::endl;
+        std::cout << "x = " << x << " delta = " << delta << " sqrtdelta = " << sqrtdelta << std::endl;
 
         for (int n=n0,cnt=-1; cnt < 4; ++n) {
             arb::Acb add;
@@ -121,7 +123,7 @@ namespace iint {
             }
             res = res1;
 
-            //std::cout << *this << " x = " << x << " delta = " << delta << " res = " << res << " cnt = " << cnt << std::endl;
+            std::cout << *this << " x = " << x << " delta = " << delta << " res = " << res << " cnt = " << cnt << std::endl;
         }
 
         return res;

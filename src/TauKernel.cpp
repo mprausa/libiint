@@ -20,6 +20,7 @@ namespace iint {
 
         res /= _reciprocal(x,-data.k0);
 
+        //std::cout << "TauKernel -- k = " << k << " res = " << res << std::endl;
         return res;
     }
 }

@@ -46,12 +46,45 @@ namespace iint {
 
         int n0 = _trat.init(x);
 
-        if (x == 1) {
-            assert(false);  //TODO
-        } else if (x.contains_zero()) {
+        if (x.contains_zero()) {
             auto pi2 = arb::Acb::Pi(prec).pow(2);
             _phi.init(x,0,2,{10*pi2,zero,20*pi2,zero,220*pi2});
             return n0;
+        } else if (x == 9-4*arb::Acb(5,prec).sqrt()) {
+            arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
+            arb::Acb sqrt5 = arb::Acb(5,prec).sqrt();
+            arb::Acb z = (9 + 4*sqrt5)/18;
+            arb::Acb sqrtz = z.sqrt();
+            arb::Acb lam = 2*sqrtz/(1+sqrtz);
+            arb::Acb ellK = ellipticK(lam);
+            arb::Acb ellE = ellipticE(lam);
+            arb::Acb psi = 2*sqrt2 * ellK/(1+sqrtz).sqrt();   // Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z]
+            arb::Acb dpsi = (-ellE - (sqrtz - 1)*ellK)/(sqrt2*(sqrtz - 1)*(1+sqrtz).sqrt()*z);  // D[psi,z]
+            arb::Acb d2psi = ((-4+8*z)*ellE + (sqrtz-1)*(5*z-4)*ellK)/(4*sqrt2*(1-sqrtz).pow(2) * (1+sqrtz).sqrt().pow(3) * z*z);   // D[psi,{z,2}]
+
+            auto c0 = 2*arb::Acb(5,prec).sqrt()/3 * psi.pow(2);
+            auto c1 = -arb::Acb::I*sqrt2*sqrt5.sqrt()*psi*(36*(2 + sqrt5)*psi - (5 + 2*sqrt5)*dpsi)/81;
+            auto c2 = (-6642*(9 + 4*sqrt5)*psi.pow(2) - 5*(9 + 4*sqrt5)*dpsi.pow(2) +
+                      psi*(792*(20 + 9*sqrt5)*dpsi - 5*(9 + 4*sqrt5)*d2psi))/8748;
+
+            std::cout << "z = " << z << std::endl;
+            std::cout << "psi = " << psi << std::endl;
+            std::cout << "dpsi = " << dpsi << std::endl;
+            std::cout << "d2psi = " << d2psi << std::endl;
+
+            std::cout << "c0 = " << c0 << std::endl;
+            std::cout << "c1 = " << c1 << std::endl;
+            std::cout << "c2 = " << c2 << std::endl;
+
+            _phi.init(x,0,1,{c0,c1,c2});
+
+            for (int n=0; n<10; ++n) {
+                std::cout << "phi[" << n << "] = " << _phi(x,n) << std::endl;
+            }
+
+            return n0;
+        } else if (x == 1) {
+            assert(false);  //TODO
         } else {
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();

@@ -14,13 +14,15 @@ namespace iint {
 
         auto thesqrt = (1 - 18*x + x*x).sqrt().conj();
         auto t = x.contains_zero() ? arb::Acb(0,prec) : (1 - 9*x - thesqrt)/(2*x);
+        int f = 2;
 
         if (x.contains_zero()) {
             _ode.init(x,-2,1,{arb::Acb(.5,prec)});
         } else if (thesqrt.contains_zero()) {
             assert(x == 9-4*arb::Acb(5,prec).sqrt());
-            auto c = arb::Acb::I*arb::Acb(20,prec).pow(arb::Acb(.25,prec))/x;
+            auto c = -arb::Acb::I*arb::Acb(20,prec).pow(arb::Acb(.25,prec))/x;
             _ode.init(x,1,1,{c});
+            f = 1;
         } else {
             _ode.init(x,0,0,{thesqrt/(2*x)});
         }
@@ -50,7 +52,7 @@ namespace iint {
 
         assert(data.nummin == 0 || data.denmin == 0);
 
-        data.n0 = 2*data.nummin - 2*data.denmin;
+        data.n0 = f*(data.nummin - data.denmin);
 
         if (data.denmin > 0) {  // let's work with the reciprocal
             data.reciprocal = true;
@@ -94,11 +96,10 @@ namespace iint {
     }
 
     const arb::Acb &TRat::xrat_expansion(point_data &data, int n) {
-        assert(n >= -2*data.denmin);
-        if (n+2*data.denmin < data.xrat.size()) return data.xrat[n+2*data.denmin];
-        while (n+2*data.denmin > data.xrat.size()) xrat_expansion(data,int(data.xrat.size()) - 2*data.denmin);
+        if (n < data.xrat.size()) return data.xrat[n];
+        while (n > data.xrat.size()) xrat_expansion(data,int(data.xrat.size()));
 
-        assert(n+2*data.denmin == data.xrat.size());
+        assert(n == data.xrat.size());
 
         long prec = data.x.default_prec();
 

@@ -58,7 +58,7 @@ namespace iint {
         public:
             IInt(const kernels_t &kernels);
 
-            void match(const arb::Acb &x1, const arb::Acb &x2);
+            void match(const arb::Acb &x1, const arb::Acb &x2, const arb::Acb &x);
 
             int start(const arb::Acb &x);
             int maxlog(const arb::Acb &x);

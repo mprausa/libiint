@@ -7,7 +7,7 @@
 #include <memory>
 #include <iostream>
 
-#if 1
+#if 0
 int main() {
     auto w0 = std::make_shared<iint::GPLKernel>(0);
     auto w1 = std::make_shared<iint::GPLKernel>(1);
@@ -98,19 +98,34 @@ int main() {
 
     return 0;
 }
-#elif 0
+#elif 1
 int main() {
-    const long prec = 100;
+    const long prec = 300;
 
     auto tau = std::make_shared<iint::TauKernel>();
     arb::Acb zero(0,prec);
-    arb::Acb x1(0.03125,prec);
-    //arb::Acb x1(0.015625,prec);
+    arb::Acb one(1,prec);
+    auto x1 = 9-4*arb::Acb(5,prec).sqrt();
 
     auto itau = iint::IInt::fetch({tau});
 
-    std::cout << *itau << " @ " << x1 << std::endl;
-    std::cout << ">> " << (*itau)(zero,x1) << std::endl;
+
+#if 0
+    for (int n=0; n<=10; ++n) {
+        std::cout << "itau[" << n << "] = " << (*itau)(x1,n,0) << std::endl;
+    }
+
+    std::cout << (*itau)(x1,x1/16) << std::endl;
+
+    return 0;
+#endif
+
+    itau->match(zero,x1/4,x1/8);
+    itau->match(x1/4,x1/2,3*x1/8);
+    itau->match(x1/2,3*x1/4,5*x1/8);
+    itau->match(3*x1/4,x1,7*x1/8);
+
+    std::cout << (*itau)(x1,x1/16) << std::endl;
 
     return 0;
 }
