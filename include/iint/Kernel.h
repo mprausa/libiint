@@ -3,6 +3,7 @@
 #include <arb/Acb.h>
 #include <typeinfo>
 #include <unordered_map>
+#include <complex>
 
 namespace iint {
     class Kernel {
@@ -14,7 +15,7 @@ namespace iint {
                 std::vector<arb::Acb> cache;
             };
             std::unordered_map<arb::Acb,point_data> _points;
-
+            std::vector<std::complex<double>> _singularities;
         public:
             arb::Acb operator() (const arb::Acb &x, int k);
             int init(const arb::Acb &x);

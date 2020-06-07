@@ -4,6 +4,7 @@
 #include <iint/EllipticKernel.h>
 #include <iint/TauKernel.h>
 #include <iint/TRat.h>
+#include <iint/Matching.h>
 #include <memory>
 #include <iostream>
 
@@ -105,10 +106,22 @@ int main() {
     auto tau = std::make_shared<iint::TauKernel>();
     arb::Acb zero(0,prec);
     arb::Acb one(1,prec);
-    auto x1 = 9-4*arb::Acb(5,prec).sqrt();
+    auto sing = 9-4*arb::Acb(5,prec).sqrt();
 
     auto itau = iint::IInt::fetch({tau});
 
+    auto points = iint::Matching::points3(zero,sing,one,.03125);
+
+    for (auto &x : points) {
+        if (x[1] >= 0.071796769724490825890) break;
+        std::cout << "matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
+        itau->match(x[0],x[1],x[2]);
+    }
+
+    arb::Acb x(.075,prec);
+
+    std::cout << *itau << " @ " << x << ": " << (*itau)(x) << std::endl;
+    return 0;
 
 #if 0
     for (int n=0; n<=10; ++n) {
@@ -118,7 +131,6 @@ int main() {
     std::cout << (*itau)(x1,x1/16) << std::endl;
 
     return 0;
-#endif
 
     itau->match(zero,x1/4,x1/8);
     itau->match(x1/4,x1/2,3*x1/8);
@@ -126,6 +138,7 @@ int main() {
     itau->match(3*x1/4,x1,7*x1/8);
 
     std::cout << (*itau)(x1,x1/16) << std::endl;
+#endif
 
     return 0;
 }

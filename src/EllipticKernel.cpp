@@ -67,25 +67,14 @@ namespace iint {
             auto c2 = (-6642*(9 + 4*sqrt5)*psi.pow(2) - 5*(9 + 4*sqrt5)*dpsi.pow(2) +
                       psi*(792*(20 + 9*sqrt5)*dpsi - 5*(9 + 4*sqrt5)*d2psi))/8748;
 
-            std::cout << "z = " << z << std::endl;
-            std::cout << "psi = " << psi << std::endl;
-            std::cout << "dpsi = " << dpsi << std::endl;
-            std::cout << "d2psi = " << d2psi << std::endl;
-
-            std::cout << "c0 = " << c0 << std::endl;
-            std::cout << "c1 = " << c1 << std::endl;
-            std::cout << "c2 = " << c2 << std::endl;
-
             _phi.init(x,0,1,{c0,c1,c2});
-
-            for (int n=0; n<10; ++n) {
-                std::cout << "phi[" << n << "] = " << _phi(x,n) << std::endl;
-            }
 
             return n0;
         } else if (x == 1) {
             assert(false);  //TODO
         } else {
+            assert(x.real() < 7-4*arb::Acb(3,prec).sqrt()); //TODO
+
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
             arb::Acb t = (1 - 9*x - thesqrt)/(2*x);

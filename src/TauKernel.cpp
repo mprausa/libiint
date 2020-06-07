@@ -1,7 +1,9 @@
 #include <iint/TauKernel.h>
 
 namespace iint {
-    TauKernel::TauKernel() : _reciprocal({0,-20,0,1},{2000,1700,560,85,5}) {}
+    TauKernel::TauKernel() : _reciprocal({0,-20,0,1},{2000,1700,560,85,5}) {
+        _singularities = {0.,0.055728090000841214363};
+    }
 
     int TauKernel::_init(const arb::Acb &x) {
         return -_reciprocal.init(x);

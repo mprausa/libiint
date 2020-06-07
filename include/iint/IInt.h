@@ -6,6 +6,18 @@
 
 namespace iint {
     class IInt {
+        protected:
+            struct cdbl_less {
+                bool operator() (std::complex<double> a, std::complex<double> b) {
+                    constexpr double eps = 1e-16;
+
+                    if (b.real() - a.real() > eps) return true;
+                    if (a.real() - b.real() > eps) return false;
+                    if (b.imag() - a.imag() > eps) return true;
+                    return false;
+                }
+            };
+
         public:
             using kernels_t = std::vector<std::shared_ptr<Kernel>>;
         protected:
