@@ -113,12 +113,12 @@ int main() {
     auto points = iint::Matching::points3(zero,sing,one,.03125);
 
     for (auto &x : points) {
-        if (x[1] >= 0.071796769724490825890) break;
+        if (x[1] == 1) break;
         std::cout << "matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
         itau->match(x[0],x[1],x[2]);
     }
 
-    arb::Acb x(.075,prec);
+    arb::Acb x(.75,prec);
 
     std::cout << *itau << " @ " << x << ": " << (*itau)(x) << std::endl;
     return 0;

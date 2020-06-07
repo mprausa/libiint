@@ -73,19 +73,36 @@ namespace iint {
         } else if (x == 1) {
             assert(false);  //TODO
         } else {
-            assert(x.real() < 7-4*arb::Acb(3,prec).sqrt()); //TODO
-
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
             arb::Acb t = (1 - 9*x - thesqrt)/(2*x);
             arb::Acb z = (t*(4 + t).pow(5))/((4 + 6*t + t*t).pow(2)*(20 + 8*t + t*t));
             arb::Acb sqrtz = z.sqrt();
-            arb::Acb lam = 2*sqrtz/(1+sqrtz);
-            arb::Acb ellK = ellipticK(lam);
-            arb::Acb ellE = ellipticE(lam);
-            arb::Acb psi = 2*sqrt2 * ellK/(1+sqrtz).sqrt();   // Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z]
-            arb::Acb dpsi = (-ellE - (sqrtz - 1)*ellK)/(sqrt2*(sqrtz - 1)*(1+sqrtz).sqrt()*z);
-            arb::Acb d2psi = ((-4+8*z)*ellE + (sqrtz-1)*(5*z-4)*ellK)/(4*sqrt2*(1-sqrtz).pow(2) * (1+sqrtz).sqrt().pow(3) * z*z);
+            arb::Acb lam1 = 2*sqrtz/(1+sqrtz);
+            arb::Acb ellK1 = ellipticK(lam1);
+            arb::Acb ellE1 = ellipticE(lam1);
+
+            arb::Acb psi,dpsi,d2psi;
+
+            if (x.real() < 7-4*arb::Acb(3,prec).sqrt()) {
+                psi = 2*sqrt2 * ellK1/(1+sqrtz).sqrt();   // Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z]
+                dpsi = (-ellE1 - (sqrtz - 1)*ellK1)/(sqrt2*(sqrtz - 1)*(1+sqrtz).sqrt()*z);
+                d2psi = ((-4+8*z)*ellE1 + (sqrtz-1)*(5*z-4)*ellK1)/(4*sqrt2*(1-sqrtz).pow(2) * (1+sqrtz).sqrt().pow(3) * z*z);
+            } else {
+                arb::Acb sqrtz2 = (1-z).sqrt();
+                arb::Acb lam2 = 2*sqrtz2/(1+sqrtz2);
+                arb::Acb ellK2 = ellipticK(lam2);
+                arb::Acb ellE2 = ellipticE(lam2);
+
+                psi = 2*sqrt2*ellK1/(1+sqrtz).sqrt() + (4*arb::Acb::I*ellK2)/(1 + sqrtz2).sqrt();   // Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z] + 2*I*Pi*Hypergeometric2F1[1/4,3/4,1,1-z]
+                dpsi = -arb::Acb::I*(ellE2 + ellK2*(-1 + sqrtz2))/((-1 + sqrtz2)*(1 + sqrtz2).sqrt()*(-1 + z)) -
+                       (ellE1 + ellK1*(-1 + sqrtz))/(sqrt2*(-1 + sqrtz)*(1 + sqrtz).sqrt()*z);
+                d2psi = (sqrt2*(ellK1*(-1 + sqrtz)*(-4 + 5*z) + ellE1*(-4 + 8*z)))/
+                        (8*(-1 + sqrtz).pow(2)*(1 + sqrtz).sqrt().pow(3)*z.pow(2)) +
+                        ((2*arb::Acb::I)*(ellK2*(-1 + sqrtz2 + 5*z - 5*sqrtz2*z) +
+                        4*ellE2*(-1 + sqrtz2*(-1 + sqrtz2*(2 + sqrtz2) + z))))/
+                        (8*(-1 + sqrtz2).pow(2)*(1 + sqrtz2).sqrt().pow(3)*(-1 + z).pow(2));
+            }
 
             arb::Acb c0 = (1-x)*(3+3*x+2*thesqrt)/(1+18*x+x*x) * psi*psi;
 
