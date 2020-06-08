@@ -12,7 +12,7 @@ namespace iint {
             }
 
             virtual std::string str() const {
-                return "w("+_a.str()+")";
+                return "omega("+_a.str()+")";
             }
         protected:
             virtual arb::Acb _calc(const arb::Acb &x, int k);
