@@ -12,7 +12,7 @@ namespace iint {
     // psi = <
     //        \ Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z] + 2*I*Pi*Hypergeometric2F1[1/4,3/4,1,1-z]     ;  Re[x] >= 7-4*Sqrt[3]
 
-    // ell[x] = numer[t]/denom[t] * (20 + 8*t + t^2)/(4 + 6*t + t^2) * psi^2
+    // ell[x] = I*Pi * numer[t]/denom[t] * (20 + 8*t + t^2)/(4 + 6*t + t^2) * psi^2
     class EllipticKernel : public Kernel {
         protected:
             TRat _trat;

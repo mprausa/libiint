@@ -13,7 +13,7 @@ namespace iint {
         auto &data = _points[x];
 
         assert(k >= data.k0);
-        if (k == data.k0) return arb::Acb::I * arb::Acb::Pi(x.default_prec()) / _reciprocal(x,-data.k0);
+        if (k == data.k0) return -arb::Acb::Pi(x.default_prec()).pow(2) / _reciprocal(x,-data.k0);
 
         arb::Acb res;
         for (int n=1; n<=k-data.k0; ++n) {

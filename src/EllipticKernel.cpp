@@ -37,7 +37,7 @@ namespace iint {
             res += _trat(x,n) * _phi(x,k-n);
         }
 
-        return res;
+        return res*arb::Acb::I*arb::Acb::Pi(x.default_prec());
     }
 
     int EllipticKernel::_init(const arb::Acb &x) {

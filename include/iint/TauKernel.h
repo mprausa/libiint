@@ -6,7 +6,7 @@ namespace iint {
     // tau[x] = ((5*I)*Pi*(4 + t)*(5 + t)*(4 + t*(6 + t)))/(t*(-20 + t^2)) / psi^2
     class TauKernel : public Kernel {
         protected:
-            EllipticKernel _reciprocal; // I*Pi/tau[x]
+            EllipticKernel _reciprocal; // -Pi^2/tau[x]
         public:
             TauKernel();
 
