@@ -104,40 +104,56 @@ int main() {
     const long prec = 300;
 
     auto tau = std::make_shared<iint::TauKernel>();
+    auto w0 = std::make_shared<iint::GPLKernel>(0);
+    auto w1 = std::make_shared<iint::GPLKernel>(1);
+    auto wn = std::make_shared<iint::GPLKernel>(-1);
+
+    auto itau = iint::IInt::fetch({tau});
+    auto hpl = iint::IInt::fetch({w1,w0,wn,w1});
+
+    auto ii1 = iint::IInt::fetch({tau,w1,w0,wn,w1});
+    auto ii2 = iint::IInt::fetch({w1,tau,w0,wn,w1});
+    auto ii3 = iint::IInt::fetch({w1,w0,tau,wn,w1});
+    auto ii4 = iint::IInt::fetch({w1,w0,wn,tau,w1});
+    auto ii5 = iint::IInt::fetch({w1,w0,wn,w1,tau});
+
     arb::Acb zero(0,prec);
     arb::Acb one(1,prec);
     auto sing = 9-4*arb::Acb(5,prec).sqrt();
-
-    auto itau = iint::IInt::fetch({tau});
 
     auto points = iint::Matching::points3(zero,sing,one,.03125);
 
     for (auto &x : points) {
         std::cout << "matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
-        itau->match(x[0],x[1],x[2]);
+
+        ii1->match(x[0],x[1],x[2]);
+        ii2->match(x[0],x[1],x[2]);
+        ii3->match(x[0],x[1],x[2]);
+        ii4->match(x[0],x[1],x[2]);
+        ii5->match(x[0],x[1],x[2]);
     }
 
     arb::Acb x(.9375,prec);
 
-    std::cout << *itau << " @ " << x << ": " << (*itau)(x) << std::endl;
-    return 0;
+    std::cout << "@ " << x << ":" << std::endl;
 
-#if 0
-    for (int n=0; n<=10; ++n) {
-        std::cout << "itau[" << n << "] = " << (*itau)(x1,n,0) << std::endl;
-    }
+    auto vtau = (*itau)(x);
+    auto vhpl = (*hpl)(x);
 
-    std::cout << (*itau)(x1,x1/16) << std::endl;
+    auto v1 = (*ii1)(x);
+    auto v2 = (*ii2)(x);
+    auto v3 = (*ii3)(x);
+    auto v4 = (*ii4)(x);
+    auto v5 = (*ii5)(x);
 
-    return 0;
-
-    itau->match(zero,x1/4,x1/8);
-    itau->match(x1/4,x1/2,3*x1/8);
-    itau->match(x1/2,3*x1/4,5*x1/8);
-    itau->match(3*x1/4,x1,7*x1/8);
-
-    std::cout << (*itau)(x1,x1/16) << std::endl;
-#endif
+    std::cout << "  " << (*itau) << " = " << vtau << std::endl;
+    std::cout << "  " << (*hpl) << " = " << vhpl << std::endl;
+    std::cout << "  " << (*ii1) << " = " << v1 << std::endl;
+    std::cout << "  " << (*ii2) << " = " << v2 << std::endl;
+    std::cout << "  " << (*ii3) << " = " << v3 << std::endl;
+    std::cout << "  " << (*ii4) << " = " << v4 << std::endl;
+    std::cout << "  " << (*ii5) << " = " << v5 << std::endl;
+    std::cout << "  shuffle: " << (v1 + v2 + v3 + v4 + v5 - vtau*vhpl) << std::endl;
 
     return 0;
 }
