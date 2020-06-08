@@ -48,6 +48,13 @@ namespace arb {
         return res;
     }
 
+    Acb Acb::Gamma(const Acb &s, long prec) {
+        Acb res;
+        acb_gamma(res.get(),s.get(),prec);
+        res.update_default_prec(prec);
+        return res;
+    }
+
     Acb Acb::PolyLog(long s, const Acb &z, long prec) {
         Acb res;
         acb_polylog_si(res.get(),s,z.get(),prec);

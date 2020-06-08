@@ -23,6 +23,7 @@ namespace arb {
             static Acb I;
             static Acb Pi(long prec);
             static Acb Zeta(const Acb &s, long prec);
+            static Acb Gamma(const Acb &x, long prec);
             static Acb PolyLog(long s, const Acb &z, long prec);
             static Acb fac(unsigned long n, long prec);
             static Acb binom(unsigned long n, unsigned long k, long prec);

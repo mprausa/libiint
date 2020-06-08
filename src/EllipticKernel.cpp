@@ -71,7 +71,16 @@ namespace iint {
 
             return n0;
         } else if (x == 1) {
-            assert(false);  //TODO
+            auto g = arb::Acb::Gamma(.25,prec).pow(4);
+            auto pi = arb::Acb::Pi(prec);
+
+            auto c0 = (-15 + 5*arb::Acb::I)*g/(8*pi);
+            auto c1 = -25*arb::Acb::I*pi;
+            auto c2 = (75 + 25*arb::Acb::I)*pi.pow(3)/g + (45 - 15*arb::Acb::I)*g/(32*pi);
+
+            _phi.init(x,3,3,{c0,c1,c2});
+
+            return n0+3;
         } else {
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
             arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
