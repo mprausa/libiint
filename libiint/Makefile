@@ -1,19 +1,19 @@
 # Makefile
 
 CXX = g++
+AR = ar
 
-CXXFLAGS = -I../include -I${HOME}/.usr/include/flint -g -std=gnu++11
-LDFLAGS=$(CXXFLAGS) -L${HOME}/.usr/lib -rdynamic -lflint -larb -lgmp -ldl -lyaml-cpp
+CXXFLAGS = -I${HOME}/.usr/include -I${HOME}/.usr/include/flint -Iinclude -g -std=gnu++11 -fPIC -g -fmax-errors=5
+ARFLAGS = rcs
 DELETE = rm -f
 
-SRC = *.cpp arb/*.cpp
+SRC = src/*.cpp src/arb/*.cpp
 
 OBJ = $(patsubst %.cpp,%.o,$(wildcard $(SRC)))
 DEP = $(patsubst %.cpp,%.cpp.dep,$(wildcard $(SRC)))
 
 DEPEND = .depend
-
-OUT = iint
+OUT = libiint.a
 
 all:	$(OUT)
 
@@ -26,7 +26,7 @@ clean:
 	$(DELETE) $(DEPEND)
 
 $(OUT):	$(OBJ) 
-	$(CXX) $(OBJ) -o $(OUT) $(LDFLAGS) 
+	$(AR) $(ARFLAGS) $(OUT) $(OBJ)
 
 $(DEPEND):	$(DEP)
 	cat $(DEP) > $(DEPEND)

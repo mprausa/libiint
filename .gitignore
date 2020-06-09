@@ -1,2 +1,5 @@
 .*.sw?
 *.log
+*.o
+*.dep
+.depend
