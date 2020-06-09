@@ -3,6 +3,7 @@
 #include <iint/ODE.h>
 #include <iint/EllipticKernel.h>
 #include <iint/TauKernel.h>
+#include <iint/KappaKernel.h>
 #include <iint/TRat.h>
 #include <iint/Matching.h>
 #include <memory>
@@ -29,16 +30,16 @@ int main() {
     auto w0 = std::make_shared<iint::GPLKernel>(0);
     auto w1 = std::make_shared<iint::GPLKernel>(1);
     auto wn = std::make_shared<iint::GPLKernel>(-1);
+    auto kappa = std::make_shared<iint::KappaKernel>();
 
     auto itau = iint::IInt::fetch({tau},x0);
-    auto hpl = iint::IInt::fetch({w1,w0,wn,w1},x0);
+    auto hpl = iint::IInt::fetch({kappa,w0,wn,w1},x0);
 
-    auto ii1 = iint::IInt::fetch({tau,w1,w0,wn,w1},x0);
-    auto ii2 = iint::IInt::fetch({w1,tau,w0,wn,w1},x0);
-    auto ii3 = iint::IInt::fetch({w1,w0,tau,wn,w1},x0);
-    auto ii4 = iint::IInt::fetch({w1,w0,wn,tau,w1},x0);
-    auto ii5 = iint::IInt::fetch({w1,w0,wn,w1,tau},x0);
-
+    auto ii1 = iint::IInt::fetch({tau,kappa,w0,wn,w1},x0);
+    auto ii2 = iint::IInt::fetch({kappa,tau,w0,wn,w1},x0);
+    auto ii3 = iint::IInt::fetch({kappa,w0,tau,wn,w1},x0);
+    auto ii4 = iint::IInt::fetch({kappa,w0,wn,tau,w1},x0);
+    auto ii5 = iint::IInt::fetch({kappa,w0,wn,w1,tau},x0);
 
     for (auto &x : points) {
         std::cout << "matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
