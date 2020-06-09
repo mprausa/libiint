@@ -1,15 +1,15 @@
 #include <iint/IInt.h>
 
 namespace iint {
-    std::unordered_map<IInt::kernels_t,std::shared_ptr<IInt>,IInt::kernels_hasher> IInt::_iints;
+    std::unordered_map<std::pair<IInt::kernels_t,arb::Acb>,std::shared_ptr<IInt>,IInt::args_hasher> IInt::_iints;
     arb::Acb IInt::_zero(0);
     arb::Acb IInt::_one(1);
 
-    IInt::IInt(const kernels_t &kernels) : _kernels(kernels) {
-        _constants[0] = 0;
+    IInt::IInt(const kernels_t &kernels, const arb::Acb &x0) : _kernels(kernels), _x0(x0) {
+        _constants[x0] = 0;
 
         if (!kernels.empty()) {
-            _subiint = fetch(kernels_t(kernels.begin()+1,kernels.end()));
+            _subiint = fetch(kernels_t(kernels.begin()+1,kernels.end()),x0);
         }
     }
 
@@ -144,9 +144,9 @@ namespace iint {
         return (*this)(x0,x-x0);
     }
 
-    std::shared_ptr<IInt> IInt::fetch(const kernels_t &kernels) {
-        auto &iint = _iints[kernels];
-        if (!iint) iint = std::make_shared<IInt>(kernels);
+    std::shared_ptr<IInt> IInt::fetch(const kernels_t &kernels, const arb::Acb &x0) {
+        auto &iint = _iints[{kernels,x0}];
+        if (!iint) iint = std::make_shared<IInt>(kernels,x0);
         return iint;
     }
 }

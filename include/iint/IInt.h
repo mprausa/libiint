@@ -22,6 +22,7 @@ namespace iint {
             using kernels_t = std::vector<std::shared_ptr<Kernel>>;
         protected:
             kernels_t _kernels;
+            arb::Acb _x0;
             std::unordered_map<arb::Acb,arb::Acb> _constants;
             std::shared_ptr<IInt> _subiint = nullptr;
 
@@ -49,26 +50,28 @@ namespace iint {
 
             std::unordered_map<cache_key_s,arb::Acb,cache_hasher> _cache;
 
-            struct kernels_hasher {
+            struct args_hasher {
                 static std::size_t combine(std::size_t seed, std::size_t hash) {
                         return seed ^ (hash + 0x9e3779b9 + (seed << 6) + (seed >> 2));
                 }
 
-                std::size_t operator()(const kernels_t &kernels) const {
-                    std::size_t hash = std::hash<size_t>()(kernels.size());
-                    for (auto &k : kernels) {
+                std::size_t operator()(const std::pair<kernels_t,arb::Acb> &args) const {
+                    std::size_t hash = std::hash<size_t>()(args.first.size());
+                    for (auto &k : args.first) {
                         hash = combine(hash,std::hash<std::shared_ptr<Kernel>>()(k));
                     }
+
+                    hash = combine(hash,std::hash<arb::Acb>()(args.second));
 
                     return hash;
                 }
 
             };
 
-            static std::unordered_map<kernels_t,std::shared_ptr<IInt>,kernels_hasher> _iints;
+            static std::unordered_map<std::pair<kernels_t,arb::Acb>,std::shared_ptr<IInt>,args_hasher> _iints;
             static arb::Acb _zero,_one;
         public:
-            IInt(const kernels_t &kernels);
+            IInt(const kernels_t &kernels, const arb::Acb &x0);
 
             void match(const arb::Acb &x1, const arb::Acb &x2, const arb::Acb &x);
 
@@ -78,18 +81,19 @@ namespace iint {
             arb::Acb operator() (const arb::Acb &x, const arb::Acb &delta);
             arb::Acb operator() (const arb::Acb &x);
 
-            static std::shared_ptr<IInt> fetch(const kernels_t &kernels);
+            static std::shared_ptr<IInt> fetch(const kernels_t &kernels, const arb::Acb &x0);
 
             std::string str() const {
-                if (_kernels.empty()) return "IInt[]";
+                if (_kernels.empty()) return "II(;"+_x0.mma()+")";
 
-                std::string s="IInt[";
+                std::string s="II(";
 
                 for (auto &k : _kernels) {
                     s += k->str()+",";
                 }
                 s.pop_back();
-                s += "]";
+
+                s += ";"+_x0.mma()+")";
                 return s;
             }
     };
