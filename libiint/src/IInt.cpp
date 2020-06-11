@@ -70,7 +70,7 @@ namespace iint {
                 res += (*_kernels.front())(x,k) * (*_subiint)(x,-2-k,m-1);
             }
 
-            res /= m;
+            res /= arb::Acb(m,x.default_prec());
         } else if (n != 0) {
             int mhat = _subiint->maxlog(x);
             int k0 = _kernels.front()->init(x);
