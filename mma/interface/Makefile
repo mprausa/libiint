@@ -17,7 +17,7 @@ clean:
 	$(DELETE) $(OBJ)
 	$(DELETE) MathLink.cpp
 
-$(OUT):	$(OBJ) 
+$(OUT):	$(OBJ) ../../libiint/libiint.a
 	$(CXX) $(OBJ) -o $(OUT) $(LDFLAGS) 
 
 %.o:	%.cpp
