@@ -6,7 +6,8 @@ digits = 31;
 
 arbString[x_?NumericQ] := StringReplace[ToString[N[x,digits],InputForm],RegularExpression["``?[0-9.]+"]->""];
 
-IIntInit[prec_Integer] := (digits = Ceiling[prec*Log[2]/Log[10]]; IIntInit[ToString[prec]];)
+Options[IIntInit] = {Verbose->False};
+IIntInit[prec_Integer,OptionsPattern[]] := (digits = Ceiling[prec*Log[2]/Log[10]]; IIntInit[prec,Boole[OptionValue[Verbose]]];)
 
 IIntCreate[kernels_List,{x0_?NumericQ,x_}] := IIntObj[IIntCreate[
     StringReplace[ToString[kernels,InputForm],{"{"->"","}"->""," "->"","["->"(","]"->")"}],

@@ -32,9 +32,11 @@ static std::shared_ptr<iint::Kernel> get_kernel(const std::string &s) {
     return krn;
 }
 
-void IIntInit(const char *sprec) {
-    prec = std::atol(sprec);
-    std::cout << "setting default precision to " << prec << std::endl;
+void IIntInit(int iprec, int iverbose) {
+    prec = iprec;
+    iint::verbose = (bool)iverbose;
+
+    if (iint::verbose) std::cout << "setting default precision to " << prec << std::endl;
 }
 
 void IIntCreate(const char *ckernels, const char *cx0) {
@@ -60,7 +62,7 @@ void IIntCreate(const char *ckernels, const char *cx0) {
     size_t id = iints.size();
     iints.push_back(iint);
 
-    std::cout << "identifier for " << *iint << " is II" << id << std::endl;
+    if (iint::verbose) std::cout << "identifier for " << *iint << " is II" << id << std::endl;
 
     if (!MLPutString(stdlink,("II"+std::to_string(id)).c_str())) {
         std::cerr << "MLPutString - error." << std::endl;
@@ -75,20 +77,24 @@ void IIntMatch(const char *cx1, const char *cx2, const char *cx3, const char *cq
 
     auto points = iint::Matching::points3(x1,x2,x3,q);
 
-    std::cout << "matiching " << x1 << " -> " << x2 << " -> " << x3 << " (q=" << q << ")" << std::endl;
+    if (iint::verbose) std::cout << "matiching " << x1 << " -> " << x2 << " -> " << x3 << " (q=" << q << ")" << std::endl;
 
     for (auto &x : points) {
         for (auto &i : iints) {
+            if (MLAbort) {
+                if (iint::verbose) std::cout << "aborted.";
+                return;
+            }
             i->match(x[0],x[1],x[2]);
         }
     }
-    std::cout << "done." << std::endl;
+    if (iint::verbose) std::cout << "done." << std::endl;
 }
 
 void IIntEvaluate(const char *cid, const char *cx) {
     std::string sid = cid;
 
-    std::cout << "evaluating " << sid << std::endl;
+    if (iint::verbose) std::cout << "evaluating " << sid << std::flush;
 
     if (sid.substr(0,2) != "II") {
         if (!MLPutString(stdlink,"$Failed")) {
@@ -108,6 +114,8 @@ void IIntEvaluate(const char *cid, const char *cx) {
     arb::Acb x(cx,prec);
 
     auto res = (*iints[id])(x);
+
+    if (iint::verbose) std::cout << " => " << res << std::endl;
 
     if (!MLPutString(stdlink,res.mma().c_str())) {
         std::cerr << "MLPutString - error." << std::endl;

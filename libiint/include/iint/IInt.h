@@ -5,6 +5,8 @@
 #include <unordered_map>
 
 namespace iint {
+    extern bool verbose;
+
     class IInt {
         protected:
             struct cdbl_less {

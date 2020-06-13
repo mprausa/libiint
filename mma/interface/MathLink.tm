@@ -9,9 +9,9 @@
 
 :Begin:
 :Function:      IIntInit
-:Pattern:       IIntInit[sprec_String]
-:Arguments:     {sprec}
-:ArgumentTypes: {String}
+:Pattern:       IIntInit[iprec_Integer,iverbose_Integer]
+:Arguments:     {iprec,iverbose}
+:ArgumentTypes: {Integer,Integer}
 :ReturnType:    Null
 :End:
 

@@ -1,6 +1,8 @@
 #include <iint/IInt.h>
 
 namespace iint {
+    bool verbose = false;
+
     std::unordered_map<std::pair<IInt::kernels_t,arb::Acb>,std::shared_ptr<IInt>,IInt::args_hasher> IInt::_iints;
     arb::Acb IInt::_zero(0);
     arb::Acb IInt::_one(1);
@@ -24,7 +26,7 @@ namespace iint {
         _constants[x2] = 0;
         _constants[x2] = (*this)(x1,x-x1) - (*this)(x2,x-x2);
 
-        std::cout << "<" << *this << "> new constant for " << x2 << " => " << _constants[x2] << std::endl;
+        if (verbose) std::cout << "<" << *this << "> new constant for " << x2 << " => " << _constants[x2] << std::endl;
     }
 
     int IInt::start(const arb::Acb &x) {
