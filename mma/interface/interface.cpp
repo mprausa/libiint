@@ -1,36 +1,12 @@
 #include <mathlink.h>
 #include <iint/IInt.h>
-#include <iint/GPLKernel.h>
-#include <iint/TauKernel.h>
-#include <iint/MuKernel.h>
-#include <iint/KappaKernel.h>
+#include <iint/KernelFactory.h>
 #include <iint/PathFinder.h>
 #include <iostream>
 
 static long prec = 100;
 static std::unordered_map<std::string,std::shared_ptr<iint::Kernel>> kernels;
 static std::vector<std::shared_ptr<iint::IInt>> iints;
-
-static std::shared_ptr<iint::Kernel> get_kernel(const std::string &s) {
-    auto &krn = kernels[s];
-    if (krn) return krn;
-
-    if (s == "tau") {
-        krn = std::make_shared<iint::TauKernel>();
-    } else if (s == "kappa") {
-        krn = std::make_shared<iint::KappaKernel>();
-    } else if (s.size() > 4 && s.substr(0,3) == "mu(" && s.back() == ')') {
-        int n = std::stoi(s.substr(3,s.size()-4));
-        krn = std::make_shared<iint::MuKernel>(n);
-    } else if (s.size() > 7 && s.substr(0,6) == "omega(" && s.back() == ')') {
-        arb::Acb a(s.substr(6,s.size()-7),prec);
-        krn = std::make_shared<iint::GPLKernel>(a);
-    } else {
-        krn = nullptr;
-    }
-
-    return krn;
-}
 
 void IIntInit(int iprec, int iverbose) {
     prec = iprec;
@@ -47,13 +23,13 @@ void IIntCreate(const char *ckernels, const char *cx0) {
         auto &c = ckernels[n];
 
         if (c == ',') {
-            kernels.push_back(get_kernel(s));
+            kernels.push_back(iint::KernelFactory::get(s,prec));
             s.clear();
         } else {
             s += c;
         }
     }
-    kernels.push_back(get_kernel(s));
+    kernels.push_back(iint::KernelFactory::get(s,prec));
 
     arb::Acb x0(cx0,prec);
 

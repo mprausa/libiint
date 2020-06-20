@@ -1,11 +1,7 @@
 #include <iint/GPLKernel.h>
 #include <iint/IInt.h>
 #include <iint/ODE.h>
-#include <iint/EllipticKernel.h>
-#include <iint/TauKernel.h>
-#include <iint/KappaKernel.h>
-#include <iint/MuKernel.h>
-#include <iint/TRat.h>
+#include <iint/KernelFactory.h>
 #include <iint/PathFinder.h>
 #include <memory>
 #include <iostream>
@@ -32,12 +28,12 @@ int main() {
     auto points = iint::PathFinder::physical(prec,q);
 #endif
 
-    auto tau = std::make_shared<iint::TauKernel>();
-    auto omega0 = std::make_shared<iint::GPLKernel>(0);
-    auto omega1 = std::make_shared<iint::GPLKernel>(1);
-    auto omegaN1 = std::make_shared<iint::GPLKernel>(-1);
-    auto kappa = std::make_shared<iint::KappaKernel>();
-    auto mu2 = std::make_shared<iint::MuKernel>(2);
+    auto tau = iint::KernelFactory::get("tau",prec);
+    auto omega0 = iint::KernelFactory::get("omega(0)",prec);
+    auto omega1 = iint::KernelFactory::get("omega(1)",prec);
+    auto omegaN1 = iint::KernelFactory::get("omega(-1)",prec);
+    auto kappa = iint::KernelFactory::get("kappa",prec);
+    auto mu2 = iint::KernelFactory::get("mu(2)",prec);
 
     auto itau = iint::IInt::fetch({tau},x0);
     auto hpl = iint::IInt::fetch({kappa,omega0,mu2,omega1},x0);
