@@ -4,7 +4,7 @@
 #include <iint/TauKernel.h>
 #include <iint/MuKernel.h>
 #include <iint/KappaKernel.h>
-#include <iint/Matching.h>
+#include <iint/PathFinder.h>
 #include <iostream>
 
 static long prec = 100;
@@ -69,17 +69,16 @@ void IIntCreate(const char *ckernels, const char *cx0) {
     }
 }
 
-void IIntMatch(const char *cx1, const char *cx2, const char *cx3, const char *cq) {
-    arb::Acb x1(cx1,prec);
-    arb::Acb x2(cx2,prec);
-    arb::Acb x3(cx3,prec);
+void IIntMatchEuclidean(const char *cq, const char *ca) {
     double q = std::stod(cq);
+    auto a = (std::string(ca) == "default") ? arb::Acb::infty : arb::Acb(ca,prec);
 
-    auto points = iint::Matching::points3(x1,x2,x3,q);
+    auto points = iint::PathFinder::euclidean(prec,q,a);
 
-    if (iint::verbose) std::cout << "matiching " << x1 << " -> " << x2 << " -> " << x3 << " (q=" << q << ")" << std::endl;
-
+    size_t cnt=1;
     for (auto &x : points) {
+        if (iint::verbose) std::cout << "[" << cnt << "/" << points.size() << "] matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
+
         for (auto &i : iints) {
             if (MLAbort) {
                 if (iint::verbose) std::cout << "aborted.";
@@ -87,6 +86,29 @@ void IIntMatch(const char *cx1, const char *cx2, const char *cx3, const char *cq
             }
             i->match(x[0],x[1],x[2]);
         }
+        ++cnt;
+    }
+    if (iint::verbose) std::cout << "done." << std::endl;
+}
+
+void IIntMatchPhysical(const char *cq, const char *ca) {
+    double q = std::stod(cq);
+    auto a = (std::string(ca) == "default") ? arb::Acb::infty : arb::Acb(ca,prec);
+
+    auto points = iint::PathFinder::physical(prec,q,a);
+
+    size_t cnt=1;
+    for (auto &x : points) {
+        if (iint::verbose) std::cout << "[" << cnt << "/" << points.size() << "] matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
+
+        for (auto &i : iints) {
+            if (MLAbort) {
+                if (iint::verbose) std::cout << "aborted.";
+                return;
+            }
+            i->match(x[0],x[1],x[2]);
+        }
+        ++cnt;
     }
     if (iint::verbose) std::cout << "done." << std::endl;
 }

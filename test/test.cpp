@@ -6,26 +6,31 @@
 #include <iint/KappaKernel.h>
 #include <iint/MuKernel.h>
 #include <iint/TRat.h>
-#include <iint/Matching.h>
+#include <iint/PathFinder.h>
 #include <memory>
 #include <iostream>
+#include <fstream>
 
 int main() {
+    iint::verbose = true;
+
     const long prec = 300;
+    double q = 0.015625;
 
     arb::Acb zero(0,prec);
     arb::Acb one(1,prec);
     auto sing = 9-4*arb::Acb(5,prec).sqrt();
+    auto x0 = one;
 
-    #if 0
-        auto x0 = zero;
-        auto points = iint::Matching::points3(zero,sing,one,.03125);
-        arb::Acb x(.9375,prec);
-    #else
-        auto x0 = one;
-        auto points = iint::Matching::points3(one,sing,zero,.03125);
-        arb::Acb x(.015625,prec);
-    #endif
+    iint::PathFinder pf({-one,zero,one,sing});
+
+#if 0
+    arb::Acb x(.015625,prec);
+    auto points = iint::PathFinder::euclidean(prec,q);
+#else
+    arb::Acb x(-.625,prec);
+    auto points = iint::PathFinder::physical(prec,q);
+#endif
 
     auto tau = std::make_shared<iint::TauKernel>();
     auto omega0 = std::make_shared<iint::GPLKernel>(0);
@@ -43,14 +48,17 @@ int main() {
     auto ii4 = iint::IInt::fetch({kappa,omega0,mu2,tau,omega1},x0);
     auto ii5 = iint::IInt::fetch({kappa,omega0,mu2,omega1,tau},x0);
 
-    for (auto &x : points) {
-        std::cout << "matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
+    {
+        size_t cnt=1;
+        for (auto &x : points) {
+            std::cout << "[" << cnt++ << "/" << points.size() << "] matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
 
-        ii1->match(x[0],x[1],x[2]);
-        ii2->match(x[0],x[1],x[2]);
-        ii3->match(x[0],x[1],x[2]);
-        ii4->match(x[0],x[1],x[2]);
-        ii5->match(x[0],x[1],x[2]);
+            ii1->match(x[0],x[1],x[2]);
+            ii2->match(x[0],x[1],x[2]);
+            ii3->match(x[0],x[1],x[2]);
+            ii4->match(x[0],x[1],x[2]);
+            ii5->match(x[0],x[1],x[2]);
+        }
     }
 
 
@@ -76,3 +84,4 @@ int main() {
 
     return 0;
 }
+

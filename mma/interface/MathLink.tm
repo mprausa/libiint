@@ -2,7 +2,8 @@
 
 :Evaluate:      IIntInit::usage = "IIntInit['default_precision'] initialize IInt"
 :Evaluate:      IIntCreate::usage = "IIntCreate['kernels','x0'] create IInt object"
-:Evaluate:      IIntMatch::usage = "IIntMatch['x1','x2','x3','q'] match coefficients 'x1'->'x2'->'x3'"
+:Evaluate:      IIntMatchEuclidean::usage = "IIntMatchEuclidean['q',a'] match coefficients in the euclidean region"
+:Evaluate:      IIntMatchPhysical::usage = "IIntMatchPhysical['q',a'] match coefficients in the physical region"
 :Evaluate:      IIntEvaluate::usage = "IIntEvaluate['identifier','x'] evaluate IInt object at 'x'"
 
 :Evaluate:	Begin["Private`"]
@@ -24,10 +25,18 @@
 :End:
 
 :Begin:
-:Function:      IIntMatch
-:Pattern:       IIntMatch[x1_String,x2_String,x3_String,q_String]
-:Arguments:     {x1,x2,x3,q}
-:ArgumentTypes: {String,String,String,String}
+:Function:      IIntMatchEuclidean
+:Pattern:       IIntMatchEuclidean[q_String,a_String]
+:Arguments:     {q,a}
+:ArgumentTypes: {String,String}
+:ReturnType:    Null
+:End:
+
+:Begin:
+:Function:      IIntMatchPhysical
+:Pattern:       IIntMatchPhysical[q_String,a_String]
+:Arguments:     {q,a}
+:ArgumentTypes: {String,String}
 :ReturnType:    Null
 :End:
 
