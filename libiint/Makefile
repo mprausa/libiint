@@ -3,7 +3,7 @@
 CXX = g++
 AR = ar
 
-CXXFLAGS = -I${HOME}/.usr/include -I${HOME}/.usr/include/flint -Iinclude -g -std=gnu++11 -fPIC -g -fmax-errors=5
+CXXFLAGS = -Iinclude -I${HOME}/.usr/include -I${HOME}/.usr/include/flint -g -std=gnu++11 -fPIC -g -fmax-errors=5
 ARFLAGS = rcs
 DELETE = rm -f
 
