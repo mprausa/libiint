@@ -21,8 +21,6 @@ IIntMatchEuclidean[q_?NumericQ] := IIntMatchEuclidean[ToString[N[q]],"default"];
 IIntMatchPhysical[q_?NumericQ,a_?NumericQ] := IIntMatchPhysical[ToString[N[q]],arbString[a]];
 IIntMatchPhysical[q_?NumericQ] := IIntMatchPhysical[ToString[N[q]],"default"];
 
-IIntMatch[{x1_?NumericQ,x2_?NumericQ,x3_?NumericQ},q_?NumericQ] := IIntMatch[arbString[x1],arbString[x2],arbString[x3],ToString[N[q]]];
-
 IIntEvaluate[id_String,x_?NumericQ] := ToExpression[IIntEvaluate[id,arbString[x]]];
 
 EndPackage[];

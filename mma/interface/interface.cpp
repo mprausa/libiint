@@ -3,6 +3,7 @@
 #include <iint/KernelFactory.h>
 #include <iint/PathFinder.h>
 #include <iostream>
+#include <fstream>
 
 static long prec = 100;
 static std::unordered_map<std::string,std::shared_ptr<iint::Kernel>> kernels;
@@ -87,6 +88,18 @@ void IIntMatchPhysical(const char *cq, const char *ca) {
         ++cnt;
     }
     if (iint::verbose) std::cout << "done." << std::endl;
+}
+
+void IIntSave(const char *fn) {
+    if (iint::verbose) std::cout << "saving constants to " << fn << std::endl;
+    std::ofstream file(fn);
+    file << iint::IInt::store() << std::endl;
+    file.close();
+}
+
+void IIntLoad(const char *fn) {
+    if (iint::verbose) std::cout << "loading constants from " << fn << std::endl;
+    iint::IInt::restore(YAML::LoadFile(fn),prec);
 }
 
 void IIntEvaluate(const char *cid, const char *cx) {

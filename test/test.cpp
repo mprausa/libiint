@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-int main() {
+int main(int argc, char **argv) {
     iint::verbose = true;
 
     const long prec = 300;
@@ -20,7 +20,7 @@ int main() {
 
     iint::PathFinder pf({-one,zero,one,sing});
 
-#if 0
+#if 1
     arb::Acb x(.015625,prec);
     auto points = iint::PathFinder::euclidean(prec,q);
 #else
@@ -44,7 +44,9 @@ int main() {
     auto ii4 = iint::IInt::fetch({kappa,omega0,mu2,tau,omega1},x0);
     auto ii5 = iint::IInt::fetch({kappa,omega0,mu2,omega1,tau},x0);
 
-    {
+    if (argc == 3 && std::string(argv[1]) == "-r") {
+        iint::IInt::restore(YAML::LoadFile(argv[2]),prec);
+    } else {
         size_t cnt=1;
         for (auto &x : points) {
             std::cout << "[" << cnt++ << "/" << points.size() << "] matching " << x[0] << " -> " << x[1] << " @ " << x[2] << std::endl;
@@ -55,8 +57,13 @@ int main() {
             ii4->match(x[0],x[1],x[2]);
             ii5->match(x[0],x[1],x[2]);
         }
-    }
 
+        if (argc == 3 && std::string(argv[1]) == "-s") {
+            std::ofstream file(argv[2]);
+            file << iint::IInt::store() << std::endl;
+            file.close();
+        }
+    }
 
     std::cout << "@ " << x << ":" << std::endl;
 

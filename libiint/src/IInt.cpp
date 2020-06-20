@@ -1,4 +1,5 @@
 #include <iint/IInt.h>
+#include <iint/KernelFactory.h>
 
 namespace iint {
     bool verbose = false;
@@ -151,5 +152,67 @@ namespace iint {
         if (!iint) iint = std::make_shared<IInt>(kernels,x0);
         return iint;
     }
+
+    YAML::Node IInt::store_constants() {
+        YAML::Node node;
+
+        node["kernels"] = std::vector<std::string>{};
+
+        for (auto &krn : _kernels) {
+            node["kernels"].push_back(krn->str());
+        }
+        node["x0"] = _x0;
+
+        for (auto &c : _constants) {
+            node["constants"].push_back(std::vector<arb::Acb>{c.first,c.second});
+        }
+
+        return node;
+
+    }
+
+    YAML::Node IInt::store() {
+        YAML::Node node;
+
+        for (auto &ii : _iints) {
+            node.push_back(ii.second->store_constants());
+        }
+        return node;
+    }
+
+    void IInt::restore_constants(const YAML::Node &node) {
+        for (auto c : node["constants"]) {
+            auto x = c[0].as<arb::Acb>();
+            auto v = c[1].as<arb::Acb>();
+
+            _constants[x] = v;
+
+            if (verbose) std::cout << "<" << *this << "> new constant for " << x << " => " << v << std::endl;
+        }
+    }
+
+    void IInt::restore(const YAML::Node &node, long prec) {
+        YAML::convert<arb::Acb>::default_prec = prec;
+
+        for (auto iinode : node) {
+            std::vector<std::shared_ptr<Kernel>> kernels;
+
+            assert(iinode["kernels"] && iinode["x0"] && iinode["constants"]);
+
+            for (auto krn : iinode["kernels"]) {
+                kernels.push_back(KernelFactory::get(krn.as<std::string>(),prec));
+            }
+
+            auto x0 = iinode["x0"].as<arb::Acb>();
+
+            auto ii = fetch(kernels,x0);
+
+            ii->restore_constants(iinode);
+
+            std::cout << "*ii = " << *ii << std::endl;
+        }
+
+    }
+
 }
 

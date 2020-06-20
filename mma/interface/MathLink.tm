@@ -4,6 +4,8 @@
 :Evaluate:      IIntCreate::usage = "IIntCreate['kernels','x0'] create IInt object"
 :Evaluate:      IIntMatchEuclidean::usage = "IIntMatchEuclidean['q',a'] match coefficients in the euclidean region"
 :Evaluate:      IIntMatchPhysical::usage = "IIntMatchPhysical['q',a'] match coefficients in the physical region"
+:Evaluate:      IIntSave::usage = "IIntSave['filename'] save all matching coefficients"
+:Evaluate:      IIntLoad::usage = "IIntLoad['filename'] load matching coefficients"
 :Evaluate:      IIntEvaluate::usage = "IIntEvaluate['identifier','x'] evaluate IInt object at 'x'"
 
 :Evaluate:	Begin["Private`"]
@@ -37,6 +39,22 @@
 :Pattern:       IIntMatchPhysical[q_String,a_String]
 :Arguments:     {q,a}
 :ArgumentTypes: {String,String}
+:ReturnType:    Null
+:End:
+
+:Begin:
+:Function:      IIntSave
+:Pattern:       IIntSave[fn_String]
+:Arguments:     {fn}
+:ArgumentTypes: {String}
+:ReturnType:    Null
+:End:
+
+:Begin:
+:Function:      IIntLoad
+:Pattern:       IIntLoad[fn_String]
+:Arguments:     {fn}
+:ArgumentTypes: {String}
 :ReturnType:    Null
 :End:
 

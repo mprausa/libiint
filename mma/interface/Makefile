@@ -4,7 +4,7 @@ CXX = g++
 DELETE = rm -f
 
 CXXFLAGS = -I../../libiint/include -I${HOME}/.usr/include -I${HOME}/.usr/include/flint -I$(MMADIR)
-LDFLAGS = $(CXXFLAGS) -L../../libiint -L$(HOME)/.usr/lib -L$(MMADIR) -liint -lflint -larb -lgmp -lML64i4 -lrt -luuid -ldl
+LDFLAGS = $(CXXFLAGS) -L../../libiint -L$(HOME)/.usr/lib -L$(MMADIR) -liint -lflint -larb -lgmp -lML64i4 -lrt -luuid -ldl -lyaml-cpp
 
 SRC = *.cpp
 OBJ = $(patsubst %.cpp,%.o,$(wildcard $(SRC))) MathLink.o

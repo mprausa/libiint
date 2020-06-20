@@ -98,6 +98,12 @@ namespace iint {
                 s += ";"+_x0.mma()+")";
                 return s;
             }
+
+            YAML::Node store_constants();
+            static YAML::Node store();
+
+            void restore_constants(const YAML::Node &node);
+            static void restore(const YAML::Node &node, long prec);
     };
 
     inline std::ostream &operator<<(std::ostream &os, const IInt &iint) {
