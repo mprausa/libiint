@@ -4,7 +4,10 @@ Install[DirectoryName[$InputFileName]<>"/interface/IInt"];
 
 digits = 31;
 
-arbString[x_?NumericQ] := StringReplace[ToString[N[x,digits],InputForm],RegularExpression["``?[0-9.]+"]->""];
+arbString[x_Real] := StringReplace[ToString[N[x,digits],InputForm],RegularExpression["``?[0-9.]+"]->""];
+arbString[x_Integer] := ToString[x,InputForm];
+arbString[x_Complex] := arbString[Re[x]]<>" + "<>arbString[Im[x]]<>"*I";
+arbString[x_?NumericQ] /; Head[x] =!= Real && Head[x] =!= Complex && Head[x] =!= Integer := arbString[N[x,digits]];
 
 Options[IIntInit] = {Verbose->False};
 IIntInit[prec_Integer,OptionsPattern[]] := (digits = Ceiling[prec*Log[2]/Log[10]]; IIntInit[prec,Boole[OptionValue[Verbose]]];)
