@@ -1,4 +1,5 @@
 #include <iint/EllipticKernel.h>
+#include <iint/utilities.h>
 #include <acb_elliptic.h>
 
 namespace {
@@ -82,18 +83,21 @@ namespace iint {
 
             return n0+3;
         } else {
+            auto x1 = xeps(x);
             arb::Acb sqrt2 = arb::Acb(2,prec).sqrt();
-            arb::Acb thesqrt = (1 - 18*x + x*x).sqrt().conj();
-            arb::Acb t = (1 - 9*x - thesqrt)/(2*x);
+            arb::Acb thesqrt = (1 - 18*x1 + x1*x1).sqrt();
+
+            arb::Acb t = (1 - 9*x1 - thesqrt)/(2*x1);
             arb::Acb z = (t*(4 + t).pow(5))/((4 + 6*t + t*t).pow(2)*(20 + 8*t + t*t));
             arb::Acb sqrtz = z.sqrt();
+
             arb::Acb lam1 = 2*sqrtz/(1+sqrtz);
             arb::Acb ellK1 = ellipticK(lam1);
             arb::Acb ellE1 = ellipticE(lam1);
 
             arb::Acb psi,dpsi,d2psi;
 
-            if (x.real() < 7-4*arb::Acb(3,prec).sqrt()) {
+            if (x.real() > -9+4*arb::Acb(5,prec).sqrt() && x.abs() < .1 && (z.real() <= 1 || z.imag() > 0)) {
                 psi = 2*sqrt2 * ellK1/(1+sqrtz).sqrt();   // Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z]
                 dpsi = (-ellE1 - (sqrtz - 1)*ellK1)/(sqrt2*(sqrtz - 1)*(1+sqrtz).sqrt()*z);
                 d2psi = ((-4+8*z)*ellE1 + (sqrtz-1)*(5*z-4)*ellK1)/(4*sqrt2*(1-sqrtz).pow(2) * (1+sqrtz).sqrt().pow(3) * z*z);
@@ -111,26 +115,27 @@ namespace iint {
                         ((2*arb::Acb::I)*(ellK2*(-1 + sqrtz2 + 5*z - 5*sqrtz2*z) +
                         4*ellE2*(-1 + sqrtz2*(-1 + sqrtz2*(2 + sqrtz2) + z))))/
                         (8*(-1 + sqrtz2).pow(2)*(1 + sqrtz2).sqrt().pow(3)*(-1 + z).pow(2));
+
             }
 
-            arb::Acb c0 = (1-x)*(3+3*x+2*thesqrt)/(1+18*x+x*x) * psi*psi;
+            arb::Acb c0 = (1-x1)*(3+3*x1+2*thesqrt)/(1+18*x1+x1*x1) * psi*psi;
 
-            arb::Acb c1 = (psi*(-16*x*(1-thesqrt + x*(-11 + 2*thesqrt + x*(-61 + 71*x + 39*thesqrt)))*psi -
-                          (20480*x.pow(5)*(1 - thesqrt + x*(-20 + 11*thesqrt + x*(70 - 11*thesqrt +
-                           x*(-20 + x + thesqrt))))*dpsi)/((-1 + x)*(-1 + thesqrt + x*(12 + 5*x - 3*thesqrt)).pow(2))))/
-                           (4*x*thesqrt*(-1 + thesqrt + x*(12 + 5*x - 3*thesqrt)).pow(2));
+            arb::Acb c1 = (psi*(-16*x1*(1-thesqrt + x1*(-11 + 2*thesqrt + x1*(-61 + 71*x1 + 39*thesqrt)))*psi -
+                          (20480*x1.pow(5)*(1 - thesqrt + x1*(-20 + 11*thesqrt + x1*(70 - 11*thesqrt +
+                           x1*(-20 + x1 + thesqrt))))*dpsi)/((-1 + x1)*(-1 + thesqrt + x1*(12 + 5*x1 - 3*thesqrt)).pow(2))))/
+                           (4*x1*thesqrt*(-1 + thesqrt + x1*(12 + 5*x1 - 3*thesqrt)).pow(2));
 
-            arb::Acb c2 = (1024*((-1 + x).pow(3)*(-1 + 9*x + thesqrt).pow(2)*(-1 + thesqrt + x*(12 + 5*x - 3*thesqrt)).pow(4)*
-                          (11*(-1 + thesqrt) + x*(330 - 231*thesqrt + x*(-2577 + 938*thesqrt + x*(2460 + 702*thesqrt +
-                          x*(3987 + 1131*thesqrt + x*(1050 - 119*x + 9*thesqrt))))))*psi.pow(2) + 320*(-1 + x)*x.pow(4)*thesqrt*
-                          (-1 + x + thesqrt).pow(4)*(-1 + 9*x + thesqrt)*(-1 + thesqrt + x*(12 + 5*x - 3*thesqrt)).pow(2)*
-                          (1 - thesqrt + x*(-11 + 2*thesqrt + x*(-61 + 71*x + 39*thesqrt)))*psi*dpsi - 640*(-1 + x)*x.pow(3)*
-                          (-1 + x + thesqrt).pow(3)*(-1 + thesqrt + x*(12 + 5*x - 3*thesqrt)).pow(2)*(2 - 2*thesqrt + x*(-90 +
-                          72*thesqrt + x*(1407 - 839*thesqrt + x*(-8852 + 3461*thesqrt + x*(19045 - 3616*thesqrt +
-                          x*(-2*(3333 + 59*thesqrt) + x*(481 - 1543*thesqrt + x*(-232 + 25*x + 25*thesqrt))))))))*psi*dpsi +
-                          12800*x.pow(8)*thesqrt*(-1 + x + thesqrt).pow(8)*(-1 + 9*x + thesqrt)*dpsi.pow(2) + 12800*x.pow(8)*
-                          thesqrt*(-1 + x + thesqrt).pow(8)*(-1 + 9*x + thesqrt)*psi*d2psi))/((-1 + x).pow(3)*thesqrt.pow(3)*
-                          (-1 + 9*x + thesqrt).pow(2)*(2 - 10*x.pow(2) - 2*thesqrt + 6*x*(-4 + thesqrt)).pow(7));
+            arb::Acb c2 = (1024*((-1 + x1).pow(3)*(-1 + 9*x1 + thesqrt).pow(2)*(-1 + thesqrt + x1*(12 + 5*x1 - 3*thesqrt)).pow(4)*
+                          (11*(-1 + thesqrt) + x1*(330 - 231*thesqrt + x1*(-2577 + 938*thesqrt + x1*(2460 + 702*thesqrt +
+                          x1*(3987 + 1131*thesqrt + x1*(1050 - 119*x1 + 9*thesqrt))))))*psi.pow(2) + 320*(-1 + x1)*x1.pow(4)*thesqrt*
+                          (-1 + x1 + thesqrt).pow(4)*(-1 + 9*x1 + thesqrt)*(-1 + thesqrt + x1*(12 + 5*x1 - 3*thesqrt)).pow(2)*
+                          (1 - thesqrt + x1*(-11 + 2*thesqrt + x1*(-61 + 71*x1 + 39*thesqrt)))*psi*dpsi - 640*(-1 + x1)*x1.pow(3)*
+                          (-1 + x1 + thesqrt).pow(3)*(-1 + thesqrt + x1*(12 + 5*x1 - 3*thesqrt)).pow(2)*(2 - 2*thesqrt + x1*(-90 +
+                          72*thesqrt + x1*(1407 - 839*thesqrt + x1*(-8852 + 3461*thesqrt + x1*(19045 - 3616*thesqrt +
+                          x1*(-2*(3333 + 59*thesqrt) + x1*(481 - 1543*thesqrt + x1*(-232 + 25*x1 + 25*thesqrt))))))))*psi*dpsi +
+                          12800*x1.pow(8)*thesqrt*(-1 + x1 + thesqrt).pow(8)*(-1 + 9*x1 + thesqrt)*dpsi.pow(2) + 12800*x1.pow(8)*
+                          thesqrt*(-1 + x1 + thesqrt).pow(8)*(-1 + 9*x1 + thesqrt)*psi*d2psi))/((-1 + x1).pow(3)*thesqrt.pow(3)*
+                          (-1 + 9*x1 + thesqrt).pow(2)*(2 - 10*x1.pow(2) - 2*thesqrt + 6*x1*(-4 + thesqrt)).pow(7));
 
             _phi.init(x,0,0,{c0,zero,c1,zero,c2});
             return n0;

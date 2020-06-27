@@ -1,4 +1,5 @@
 #include <iint/TRat.h>
+#include <iint/utilities.h>
 #include <algorithm>
 
 namespace iint {
@@ -12,14 +13,15 @@ namespace iint {
         long prec = x.default_prec();
         point_data data;
 
-        auto thesqrt = (1 - 18*x + x*x).sqrt().conj();
+        auto x1 = xeps(x);
+
+        auto thesqrt = (1 - 18*x1 + x1*x1).sqrt();
         auto t = x.contains_zero() ? arb::Acb(0,prec) : (1 - 9*x - thesqrt)/(2*x);
         int f = 2;
 
         if (x.contains_zero()) {
             _ode.init(x,-2,1,{arb::Acb(.5,prec)});
-        } else if (thesqrt.contains_zero()) {
-            assert(x == 9-4*arb::Acb(5,prec).sqrt());
+        } else if (x == 9-4*arb::Acb(5,prec).sqrt()) {
             auto c = -arb::Acb::I*arb::Acb(20,prec).pow(arb::Acb(.25,prec))/x;
             _ode.init(x,1,1,{c});
             f = 1;
