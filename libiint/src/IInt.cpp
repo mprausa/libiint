@@ -208,8 +208,6 @@ namespace iint {
             auto ii = fetch(kernels,x0);
 
             ii->restore_constants(iinode);
-
-            std::cout << "*ii = " << *ii << std::endl;
         }
 
     }
