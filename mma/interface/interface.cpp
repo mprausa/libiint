@@ -105,7 +105,7 @@ void IIntLoad(const char *fn) {
 void IIntEvaluate(const char *cid, const char *cx) {
     std::string sid = cid;
 
-    if (iint::verbose) std::cout << "evaluating " << sid << std::flush;
+    if (iint::verbose) std::cout << "evaluating " << sid << " @ " << cx << std::flush;
 
     if (sid.substr(0,2) != "II") {
         if (!MLPutString(stdlink,"$Failed")) {
