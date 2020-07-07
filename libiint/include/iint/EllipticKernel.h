@@ -24,19 +24,25 @@
 #include <iint/Kernel.h>
 
 namespace iint {
+    // base class for integration kernels of the form ell[x], with
+    //
     // t = (1 - 9*x - Sqrt[1 - 18*x + x^2])/(2*x)
     // z = (t*(4 + t)^5)/((4 + 6*t + t^2)^2*(20 + 8*t + t^2))
-
+    //
     //        / Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z]                                               ;  inner region
     // psi = <
     //        \ Sqrt[2]*Pi*Hypergeometric2F1[1/4,3/4,1,z] + 2*I*Pi*Hypergeometric2F1[1/4,3/4,1,1-z]     ;  outer region
+    //
+    // ell[x] = I*Pi * numer[t]/denom[t] * (20 + 8*t + t^2)/(4 + 6*t + t^2) * psi^2,
+    //
+    // where numer[t] and denom[t] are polynomials in t
 
-    // ell[x] = I*Pi * numer[t]/denom[t] * (20 + 8*t + t^2)/(4 + 6*t + t^2) * psi^2
     class EllipticKernel : public Kernel {
         protected:
             TRat _trat;
             ODE _phi;   // phi = (20 + 8*t + t^2)/(4 + 6*t + t^2) * psi^2
         public:
+            // nummer(denom) is a std::vector<int> of the coefficients of numer[t](denom[t]) starting at t^0
             EllipticKernel(const std::vector<int> &numer, const std::vector<int> &denom);
         protected:
             virtual arb::Acb _calc(const arb::Acb &x, int k);

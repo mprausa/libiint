@@ -25,6 +25,7 @@
 #include <complex>
 
 namespace iint {
+    // base class for integration kernels
     class Kernel {
         protected:
             bool _nocache = false;
@@ -36,15 +37,22 @@ namespace iint {
             std::unordered_map<arb::Acb,point_data> _points;
             std::vector<std::complex<double>> _singularities;
         public:
+            // wrapper function to _calc, implements caching
             arb::Acb operator() (const arb::Acb &x, int k);
+
+            // wrapper function to _init, implements caching
             int init(const arb::Acb &x);
 
+            // provide readable string (should be replaced by derived class)
             virtual std::string str() const {
                 return typeid(*this).name();
             }
         protected:
-            virtual int _init(const arb::Acb &x) = 0;
-            virtual arb::Acb _calc(const arb::Acb &x, int k) = 0;
+            // initialize expansion around x1, return k0
+            virtual int _init(const arb::Acb &x1) = 0;
+
+            // calculate expansion coefficient of (x-x1)^(k/2)
+            virtual arb::Acb _calc(const arb::Acb &x1, int k) = 0;
     };
 
     inline std::ostream &operator<<(std::ostream &os, const Kernel &krn) {

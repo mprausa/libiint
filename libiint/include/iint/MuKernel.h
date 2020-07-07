@@ -22,6 +22,7 @@
 #include <iint/EllipticKernel.h>
 
 namespace iint {
+    // integration kernel mu(n)
     class MuKernel : public EllipticKernel {
         protected:
             int _n;

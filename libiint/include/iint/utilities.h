@@ -22,6 +22,7 @@
 #include <arb/Acb.h>
 
 namespace iint {
+    // add small positive imaginary part to x if x is real
     inline arb::Acb xeps(const arb::Acb &x) {
         if (!x.imag().contains_zero()) return x;
         long prec = x.default_prec();

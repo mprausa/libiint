@@ -22,6 +22,7 @@
 #include <iint/Kernel.h>
 
 namespace iint {
+    // GPL-like integration kernel omega(a)
     class GPLKernel : public Kernel {
         protected:
             arb::Acb _a;

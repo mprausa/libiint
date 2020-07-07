@@ -22,6 +22,8 @@
 #include <iint/EllipticKernel.h>
 
 namespace iint {
+    // integration kernel tau
+    //
     // tau[x] = ((5*I)*Pi*(4 + t)*(5 + t)*(4 + t*(6 + t)))/(t*(-20 + t^2)) / psi^2
     class TauKernel : public Kernel {
         protected:

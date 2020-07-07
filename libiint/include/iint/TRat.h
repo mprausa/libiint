@@ -22,7 +22,7 @@
 #include <iint/ODE.h>
 
 namespace iint {
-    // numer[t]/denom[t], where t = (1 - 9*x - Sqrt[1 - 18*x + x^2])/(2*x)
+    // class for rational functions in t (expanded in x)
     class TRat {
         protected:
             const arb::Acb _zero{0};
@@ -42,10 +42,15 @@ namespace iint {
 
             std::unordered_map<arb::Acb,point_data> _points;
         public:
+            // Represents numer[t]/denom[t], where t = (1 - 9*x - Sqrt[1 - 18*x + x^2])/(2*x).
+            // nummer(denom) is a std::vector<int> of the coefficients of numer[t](denom[t]) starting at t^0
             TRat(const std::vector<int> &numer, const std::vector<int> &denom);
 
+            // initialize expansion around x, return lowest value of n
             int init(const arb::Acb &x);
-            const arb::Acb &operator() (const arb::Acb &x, int n);
+
+            // calculate expansion coefficient of (x-x1)^(k/2)
+            const arb::Acb &operator() (const arb::Acb &x1, int n);
 
             void print(std::ostream &os) const;
         private:

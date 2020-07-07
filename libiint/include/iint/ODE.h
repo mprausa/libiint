@@ -23,6 +23,8 @@
 #include <unordered_map>
 
 namespace iint {
+    // solve ordinary differential equation with a power series
+    // ansatz (with half-integer powers)
     class ODE {
         protected:
             arb::Acb zero{0};
@@ -39,12 +41,24 @@ namespace iint {
 
             std::unordered_map<arb::Acb,point_data> _points;
         public:
+            // The ode is defined by 0 = sum_n p_n(x) * Dx^n f(x),
+            // where p_n(x) are polynomials. The coefficients of
+            // p_n are provided in the std::vector<int> p[n]
+            // starting at x^0.
             ODE(const std::vector<std::vector<int>> &p);
 
+            // Initialize power series around x.
+            // k0/2 denotes the power of the leading order of the expansion.
+            // a are the first few terms of the expansion (initial values).
+            // The integer r is used to indicate that C_jk = 0 for j>N-r (N = order of ode).
             void init(const arb::Acb &x, int k0, int r, const std::vector<arb::Acb> &a);
+
+            // return lowest k value of expansion around x
             int start(const arb::Acb &x);
+
+            // calculate expansion term of order k/2
             const arb::Acb &operator() (const arb::Acb &x, int k);
         private:
-            arb::Acb C(int j, int k, const point_data &data) const;
+            arb::Acb C(int j, int k, const point_data &data) const; // C_jk
     };
 }

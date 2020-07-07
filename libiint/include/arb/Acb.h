@@ -30,6 +30,7 @@ namespace arb {
     class Acb;
     inline std::ostream &operator<<(std::ostream &os, const Acb &acb);
 
+    // This is a C++ wrapper to libarb providing an interface to the complex type acb_t
     class Acb {
         friend std::ostream &operator<<(std::ostream &os, const Acb &acb);
         protected:

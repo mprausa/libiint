@@ -26,6 +26,7 @@
 namespace iint {
     extern bool verbose;
 
+    // class for iterated integrals
     class IInt {
         protected:
             struct cdbl_less {
@@ -42,8 +43,10 @@ namespace iint {
         public:
             using kernels_t = std::vector<std::shared_ptr<Kernel>>;
         protected:
-            kernels_t _kernels;
+            kernels_t _kernels;     // kernels f_1,...,f_N
             arb::Acb _x0;
+
+            // _constants[x] contains the constant term of the expansion around x
             std::unordered_map<arb::Acb,arb::Acb> _constants;
             std::shared_ptr<IInt> _subiint = nullptr;
 
@@ -94,16 +97,29 @@ namespace iint {
         public:
             IInt(const kernels_t &kernels, const arb::Acb &x0);
 
+            // match the constant term of the expansion around x2
+            // by evaluating the expansions around x1 and x2 at x
             void match(const arb::Acb &x1, const arb::Acb &x2, const arb::Acb &x);
 
-            int start(const arb::Acb &x);
-            int maxlog(const arb::Acb &x);
-            const arb::Acb &operator() (const arb::Acb &x, int n, int m);
+            int start(const arb::Acb &x);   // lowest n-value of expansion around x
+            int maxlog(const arb::Acb &x);  // largest m-value of expansion around x
+
+            // return series coefficient of (x-x1)^(n/2)*Log[x-x1]^m
+            const arb::Acb &operator() (const arb::Acb &x1, int n, int m);
+
+            // evaluate series around x at x+delta
             arb::Acb operator() (const arb::Acb &x, const arb::Acb &delta);
+
+            // Evaluate iterative integral at x.
+            // This function looks for the closest point x1 where a constant term
+            // is available and calls (*this)(x1,x-x1).
             arb::Acb operator() (const arb::Acb &x);
 
+            // New IInt objects should always be created using the fetch function.
+            // Provides caching
             static std::shared_ptr<IInt> fetch(const kernels_t &kernels, const arb::Acb &x0);
 
+            // string representation of IInt
             std::string str() const {
                 if (_kernels.empty()) return "II(;"+_x0.mma()+")";
 
@@ -118,10 +134,16 @@ namespace iint {
                 return s;
             }
 
+            // store all constants in a YAML node
             YAML::Node store_constants();
+
+            // store all constants of all IInts in a YAML node
             static YAML::Node store();
 
+            // restore constants from YAML node
             void restore_constants(const YAML::Node &node);
+
+            // restore constants of all IInts in YAML node
             static void restore(const YAML::Node &node, long prec);
     };
 

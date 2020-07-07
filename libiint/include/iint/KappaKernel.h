@@ -22,6 +22,7 @@
 #include <iint/EllipticKernel.h>
 
 namespace iint {
+    // integration kernel kappa
     class KappaKernel : public EllipticKernel {
         public:
             KappaKernel();
