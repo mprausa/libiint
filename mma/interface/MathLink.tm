@@ -17,22 +17,12 @@
 ::  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ::
 
-:Evaluate:	BeginPackage["IInt`"]
-
-:Evaluate:      IIntInit::usage = "IIntInit['default_precision'] initialize IInt"
-:Evaluate:      IIntCreate::usage = "IIntCreate['kernels','x0'] create IInt object"
-:Evaluate:      IIntMatchEuclidean::usage = "IIntMatchEuclidean['q',a'] match coefficients in the euclidean region"
-:Evaluate:      IIntMatchPhysical::usage = "IIntMatchPhysical['q',a'] match coefficients in the physical region"
-:Evaluate:      IIntSave::usage = "IIntSave['filename'] save all matching coefficients"
-:Evaluate:      IIntLoad::usage = "IIntLoad['filename'] load matching coefficients"
-:Evaluate:      IIntEvaluate::usage = "IIntEvaluate['identifier','x'] evaluate IInt object at 'x'"
-:Evaluate:      IIntSeries::usage = "IIntSeries['identifier','var','x0','order'] expand IInt object at 'x0' upto 'order'"
-
-:Evaluate:	Begin["Private`"]
+:Evaluate:      BeginPackage["IInt`"]
+:Evaluate:      Begin["Private`"]
 
 :Begin:
 :Function:      IIntInit
-:Pattern:       IIntInit[iprec_Integer,iverbose_Integer]
+:Pattern:       InternalIIntInit[iprec_Integer,iverbose_Integer]
 :Arguments:     {iprec,iverbose}
 :ArgumentTypes: {Integer,Integer}
 :ReturnType:    Null
@@ -40,7 +30,7 @@
 
 :Begin:
 :Function:      IIntCreate
-:Pattern:       IIntCreate[kernels_String,x0_String]
+:Pattern:       InternalIIntCreate[kernels_String,x0_String]
 :Arguments:     {kernels,x0}
 :ArgumentTypes: {String,String}
 :ReturnType:    Manual
@@ -48,7 +38,7 @@
 
 :Begin:
 :Function:      IIntMatchEuclidean
-:Pattern:       IIntMatchEuclidean[q_String,a_String]
+:Pattern:       InternalIIntMatchEuclidean[q_String,a_String]
 :Arguments:     {q,a}
 :ArgumentTypes: {String,String}
 :ReturnType:    Null
@@ -56,7 +46,7 @@
 
 :Begin:
 :Function:      IIntMatchPhysical
-:Pattern:       IIntMatchPhysical[q_String,a_String]
+:Pattern:       InternalIIntMatchPhysical[q_String,a_String]
 :Arguments:     {q,a}
 :ArgumentTypes: {String,String}
 :ReturnType:    Null
@@ -64,7 +54,7 @@
 
 :Begin:
 :Function:      IIntSave
-:Pattern:       IIntSave[fn_String]
+:Pattern:       InternalIIntSave[fn_String]
 :Arguments:     {fn}
 :ArgumentTypes: {String}
 :ReturnType:    Null
@@ -72,7 +62,7 @@
 
 :Begin:
 :Function:      IIntLoad
-:Pattern:       IIntLoad[fn_String]
+:Pattern:       InternalIIntLoad[fn_String]
 :Arguments:     {fn}
 :ArgumentTypes: {String}
 :ReturnType:    Null
@@ -80,7 +70,7 @@
 
 :Begin:
 :Function:      IIntEvaluate
-:Pattern:       IIntEvaluate[identifier_String,x_String]
+:Pattern:       InternalIIntEvaluate[identifier_String,x_String]
 :Arguments:     {identifier,x}
 :ArgumentTypes: {String,String}
 :ReturnType:    Manual
@@ -88,11 +78,11 @@
 
 :Begin:
 :Function:      IIntSeries
-:Pattern:       IIntSeries[identifier_String,var_String,x_String,order_Integer]
+:Pattern:       InternalIIntSeries[identifier_String,var_String,x_String,order_Integer]
 :Arguments:     {identifier,var,x,order}
 :ArgumentTypes: {String,String,String,Integer}
 :ReturnType:    Manual
 :End:
 
-:Evaluate:	End[]
-:Evaluate:	EndPackage[]
+:Evaluate:      End[]
+:Evaluate:      EndPackage[]
