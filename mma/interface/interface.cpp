@@ -1,3 +1,21 @@
+/*
+ *  mma/interface/interface.cpp
+ *
+ *  Copyright (C) 2020 Mario Prausa
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include <mathlink.h>
 #include <iint/IInt.h>
 #include <iint/KernelFactory.h>
@@ -129,6 +147,49 @@ void IIntEvaluate(const char *cid, const char *cx) {
     if (iint::verbose) std::cout << " => " << res << std::endl;
 
     if (!MLPutString(stdlink,res.mma().c_str())) {
+        std::cerr << "MLPutString - error." << std::endl;
+    }
+}
+
+void IIntSeries(const char *cid, const char *cvar, const char *cx, int order) {
+    std::string sid = cid;
+    std::string sx = cx;
+    std::string svar = cvar;
+
+    if (iint::verbose) std::cout << "series expansion of " << sid << " around " << cx << " upto order " << order << std::endl;
+
+    if (sid.substr(0,2) != "II") {
+        if (!MLPutString(stdlink,"$Failed")) {
+            std::cerr << "MLPutString - error." << std::endl;
+        }
+        return;
+    }
+
+    size_t id = std::stol(sid.substr(2));
+    if (id >= iints.size()) {
+        if (!MLPutString(stdlink,"$Failed")) {
+            std::cerr << "MLPutString - error." << std::endl;
+        }
+        return;
+    }
+
+    auto iint = iints[id];
+    arb::Acb x(sx,prec);
+
+    int n0 = iint->start(x);
+    int mhat = iint->maxlog(x);
+
+    std::string res = "O["+svar+","+sx+"]^"+std::to_string(order+1);
+
+    for (int n=n0; n<=2*order+1; ++n) {
+        for (int m=0; m<=mhat; ++m) {
+            auto v = (*iint)(x,n,m);
+            if (v.contains_zero()) continue;
+            res += " + (" + v.mma() + ")*(" + svar + "-(" + sx + "))^("+std::to_string(n)+"/2)*Log["+svar+"-("+sx+")]^"+std::to_string(m);
+        }
+    }
+
+    if (!MLPutString(stdlink,res.c_str())) {
         std::cerr << "MLPutString - error." << std::endl;
     }
 }

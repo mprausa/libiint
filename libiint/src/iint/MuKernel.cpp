@@ -1,5 +1,5 @@
 /*
- *  include/iint/TauKernel.h
+ *  src/iint/MuKernel.cpp
  *
  *  Copyright (C) 2020 Mario Prausa
  *
@@ -17,24 +17,20 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include <iint/MuKernel.h>
 
-#include <iint/EllipticKernel.h>
+namespace {
+    std::vector<int> prepend(const std::vector<int> &v, int n) {
+        std::vector<int> u(n,0);
+        u.insert(u.end(),v.begin(),v.end());
+        return u;
+    }
+}
 
 namespace iint {
-    // tau[x] = ((5*I)*Pi*(4 + t)*(5 + t)*(4 + t*(6 + t)))/(t*(-20 + t^2)) / psi^2
-    class TauKernel : public Kernel {
-        protected:
-            EllipticKernel _reciprocal; // -Pi^2/tau[x]
-        public:
-            TauKernel();
-
-            virtual std::string str() const {
-                return "tau";
-            }
-        protected:
-            virtual int _init(const arb::Acb &x);
-            virtual arb::Acb _calc(const arb::Acb &x, int k);
-    };
+    MuKernel::MuKernel(int n)
+        : _n(n), EllipticKernel(
+            prepend({100,45,5},n?n-1:0),
+            prepend({-8000,-6400,-1680,0,84,16,1},n?0:1)) {}
 }
 

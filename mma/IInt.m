@@ -26,4 +26,6 @@ IIntMatchPhysical[q_?NumericQ] := IIntMatchPhysical[ToString[N[q]],"default"];
 
 IIntEvaluate[id_String,x_?NumericQ] := ToExpression[IIntEvaluate[id,arbString[x]]];
 
+IIntSeries[id_String,{x_Symbol,x0_?NumericQ,order_Integer}] := ToExpression[IIntSeries[id,ToString[x],arbString[x0],order]];
+
 EndPackage[];

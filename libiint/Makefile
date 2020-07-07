@@ -7,7 +7,7 @@ CXXFLAGS = -Iinclude -I${HOME}/.usr/include -I${HOME}/.usr/include/flint -g -std
 ARFLAGS = rcs
 DELETE = rm -f
 
-SRC = src/*.cpp src/arb/*.cpp
+SRC = src/iint/*.cpp src/arb/*.cpp
 
 OBJ = $(patsubst %.cpp,%.o,$(wildcard $(SRC)))
 DEP = $(patsubst %.cpp,%.cpp.dep,$(wildcard $(SRC)))

@@ -1,5 +1,5 @@
 /*
- *  include/iint/TauKernel.h
+ *  src/iint/GPLKernel.cpp
  *
  *  Copyright (C) 2020 Mario Prausa
  *
@@ -17,24 +17,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <iint/EllipticKernel.h>
+#include <iint/GPLKernel.h>
 
 namespace iint {
-    // tau[x] = ((5*I)*Pi*(4 + t)*(5 + t)*(4 + t*(6 + t)))/(t*(-20 + t^2)) / psi^2
-    class TauKernel : public Kernel {
-        protected:
-            EllipticKernel _reciprocal; // -Pi^2/tau[x]
-        public:
-            TauKernel();
+    arb::Acb GPLKernel::_calc(const arb::Acb &x, int k) {
+        if (x == _a) {
+            return (k==-2) ? 1 : 0;
+        }
 
-            virtual std::string str() const {
-                return "tau";
-            }
-        protected:
-            virtual int _init(const arb::Acb &x);
-            virtual arb::Acb _calc(const arb::Acb &x, int k);
-    };
+        if (k%2) return 0;
+        return -(_a-x).pow(-k/2-1);
+    }
+
+    int GPLKernel::_init(const arb::Acb &x) {
+        return (x == _a) ? -2 : 0;
+    }
 }
-

@@ -1,5 +1,5 @@
 /*
- *  include/iint/TauKernel.h
+ *  src/iint/KappaKernel.cpp
  *
  *  Copyright (C) 2020 Mario Prausa
  *
@@ -17,24 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <iint/EllipticKernel.h>
+#include <iint/KappaKernel.h>
 
 namespace iint {
-    // tau[x] = ((5*I)*Pi*(4 + t)*(5 + t)*(4 + t*(6 + t)))/(t*(-20 + t^2)) / psi^2
-    class TauKernel : public Kernel {
-        protected:
-            EllipticKernel _reciprocal; // -Pi^2/tau[x]
-        public:
-            TauKernel();
-
-            virtual std::string str() const {
-                return "tau";
-            }
-        protected:
-            virtual int _init(const arb::Acb &x);
-            virtual arb::Acb _calc(const arb::Acb &x, int k);
-    };
+    KappaKernel::KappaKernel()
+        : EllipticKernel(
+            {-2000,-200,215,35},
+            {0,-160000,-192000,-92800,-19840,0,992,232,24,1}) {}
 }
-
