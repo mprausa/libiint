@@ -20,7 +20,6 @@
 #pragma once
 
 #include <acb.h>
-#include <fmpqxx.h>
 #include <yaml-cpp/yaml.h>
 #include <sstream>
 #include <complex>
@@ -80,11 +79,6 @@ namespace arb {
             Acb(std::complex<double> cmplx, long prec=ARF_PREC_EXACT) : defPrec(prec) {
                 acb_init(acb);
                 acb_set_d_d(acb,cmplx.real(),cmplx.imag());
-            }
-
-            Acb(const flint::fmpqxx &q, long prec) : defPrec(prec) {
-                acb_init(acb);
-                acb_set_fmpq(acb, q._data().inner, prec);
             }
 
             Acb(const std::string &str, long prec);
@@ -340,14 +334,6 @@ namespace arb {
                 res.update_default_prec(std::min(defPrec,other.defPrec));
 
                 return res;
-            }
-
-            Acb operator*(const flint::fmpqxx &q) const {
-                long prec0 = prec();
-                if (prec0 == ARF_PREC_EXACT) prec0 = defPrec;
-                if (prec0 < ARF_PREC_EXACT) prec0 += 16;
-
-                return (*this) * Acb(q,prec0);
             }
 
             Acb operator/(const Acb &other) const {

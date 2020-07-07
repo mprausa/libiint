@@ -66,3 +66,4 @@ BeginPackage["IInt`"];
         IIntSeries[ex_,{x_Symbol,x0_?NumericQ,order_Integer}] := (ex/.IIntObj[id_String,x]:>IIntSeries[id,{x,x0,order}]);
     End[];
 EndPackage[];
+

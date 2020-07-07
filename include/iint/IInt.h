@@ -22,6 +22,7 @@
 #include <iint/Kernel.h>
 #include <memory>
 #include <unordered_map>
+#include <iostream>
 
 namespace iint {
     extern bool verbose;
