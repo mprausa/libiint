@@ -16,7 +16,7 @@ If[!FileExistsQ["ggh-nc2.m"],
 digits = 20;
 
 (* points *)
-xpoints = {-0.00111913,0.0125,-0.75};
+xpoints = {-0.00112,0.0125,-0.75};
 
 (* small imaginary part *)
 ieps = I*1.`100*^-70;
