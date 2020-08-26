@@ -35,7 +35,6 @@ namespace iint {
                 std::vector<arb::Acb> cache;
             };
             std::unordered_map<arb::Acb,point_data> _points;
-            std::vector<std::complex<double>> _singularities;
         public:
             // wrapper function to _calc, implements caching
             arb::Acb operator() (const arb::Acb &x, int k);
