@@ -20,13 +20,13 @@
 #include <iint/ODE.h>
 
 namespace {
-        static arb::Acb pochhammer(const arb::Acb &x, int k) {
-            arb::Acb v=1;
-            for (int n=0; n<k; ++n) {
-                v *= x+n;
-            }
-            return v;
-        };
+    static arb::Acb pochhammer(const arb::Acb &x, int k) {
+        arb::Acb v=1;
+        for (int n=0; n<k; ++n) {
+            v *= x+n;
+        }
+        return v;
+    };
 }
 
 namespace iint {
